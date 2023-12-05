@@ -1,5 +1,6 @@
 # RASA
-The project was forked from [rasa-bot](https://github.com/Chunshan-Theta/Mentor-MBTI)
+The project was forked from [rasa-bot](https://github.com/Chunshan-Theta/Mentor-MBTI).
+
 This is a mentor bot that can help to introduce the discussion event and teach the user how to discussion, built with the rasa framework and LLM. 
 We design ideas from ChatDev and try to build a step-by-step framework. 
 
