@@ -25,7 +25,7 @@ We design ideas from ChatDev and try to build a step-by-step framework.
 
 ### Start Service
 1. Update OpenAI API Key in docker-compose.yml
-2. Update Domain name in botroom(frontend)
+2. Update Domain name in botroom/App.js:23 -> (frontend)
 3. up service with docker-compose
 ```
 docker-compose up
