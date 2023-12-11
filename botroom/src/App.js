@@ -20,7 +20,7 @@ const App = () => {
     setMessages(messages => [...messages, newMessage] );
 
     // Send POST request to Backend Service
-    fetch('https://expert-acorn-7vrq794wq66hr9v5-5005.app.github.dev/webhooks/rest/webhook/', {
+    fetch('https://literate-disco-97qv694x775f7xqv-5005.app.github.dev/webhooks/rest/webhook/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

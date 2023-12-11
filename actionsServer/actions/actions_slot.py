@@ -24,37 +24,13 @@ def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
 
 
 
-class ActionSoltWelcomeStageSetFalse(Action):
+class ActionSoltStageSetIntroNuclearPower(Action):
     def name(self) -> Text:
-        return "action_solt_welcome_stage_set_false"
+        return "action_solt_stage_set_intro_nuclear_power"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
-        return [SlotSet("welcome_stage", False)]
-
-class ActionSoltStoryStageSetStarted(Action):
-    def name(self) -> Text:
-        return "action_solt_story_stage_set_started"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
-
-        # dispatcher.utter_message(text="CALL CUSTOM ACTION `action_solt_story_stage_set_started`")
-        return [SlotSet("story_started", True)]
-
-
-class ActionSoltStoryStageSetFinished(Action):
-    def name(self) -> Text:
-        return "action_solt_story_stage_set_finished"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
-        # dispatcher.utter_message(text="CALL CUSTOM ACTION `action_solt_story_stage_set_finished`")
-        return [SlotSet("story_finished", True)]
+        return [SlotSet("stage", "intro_nuclear_power")]

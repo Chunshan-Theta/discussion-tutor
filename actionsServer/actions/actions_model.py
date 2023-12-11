@@ -27,40 +27,29 @@ assert(checkClient(client))
 
 
 
-class ActionAskGptExtendStory(Action):
+class ActionAskGpt_IntroTheBot(Action):
     def name(self) -> Text:
-        return "action_ask_gpt_extend_story"
+        return "action_introduce_the_bot"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        userText: str = "我選擇是:"+getUserText(tracker)
-        botReply: str = callGPTStoryExtend(getUserId(tracker), userText)
-        for m in botReply.split("\n"):
-            dispatcher.utter_message(text=str(m))
 
-        if "GAMEOVER" in botReply or "遊戲結束" in botReply:
+        dispatcher.utter_message("Hi It's bot!")
+        return []    
+        # userText: str = "我選擇是:"+getUserText(tracker)
+        # botReply: str = callGPTStoryExtend(getUserId(tracker), userText)
+        # for m in botReply.split("\n"):
+        #     dispatcher.utter_message(text=str(m))
 
-            dispatcher.utter_message(text="遊戲將要結束 進行分析 沒問題請說繼續")
-            return [
-                SlotSet("story_started", False),
-                SlotSet("story_finished", True)
-            ]
-        else:
-            return []
+        # if "GAMEOVER" in botReply or "遊戲結束" in botReply:
+
+        #     dispatcher.utter_message(text="遊戲將要結束 進行分析 沒問題請說繼續")
+        #     return [
+        #         SlotSet("story_started", False),
+        #         SlotSet("story_finished", True)
+        #     ]
+        # else:
+        #     return []
 
 
-class ActionAskGptAnalysisStory(Action):
-
-    def name(self) -> Text:
-        return "action_ask_gpt_analysis_story"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        keymap = {}
-        userText: str = getUserText(tracker)
-        for reply in decodeAnalyzeStory(callGPT_AnalyzeStory(getUserId(tracker))):
-            dispatcher.utter_message(text=reply) 
-            
-        return []
