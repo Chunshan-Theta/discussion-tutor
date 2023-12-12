@@ -149,3 +149,8 @@ docker-compose up test-model
 docker run -it -v ./actionsServer:/app rasa/rasa:3.6.6-full interactive
 ```
 
+- Testing In docker Container
+```
+docker run -it -v ./actionsServer:/app --entrypoint=/bin/bash rasa/rasa:3.6.6-full
+```
+
