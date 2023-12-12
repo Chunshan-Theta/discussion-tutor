@@ -52,4 +52,47 @@ class ActionAskGpt_IntroTheBot(Action):
         # else:
         #     return []
 
+class ActionAskGpt_NuclearPower(Action):
+    def name(self) -> Text:
+        return "action_introduce_nuclear_power"
 
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        dispatcher.utter_message("Hi It's bot! NuclearPower")
+        return []    
+
+class ActionAskGpt_Discussion(Action):
+    def name(self) -> Text:
+        return "action_introduce_discussion"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        dispatcher.utter_message("Hi It's bot! Discussion")
+        return []    
+
+class ActionAskGpt_TryAsk(Action):
+    def name(self) -> Text:
+        return "action_try_ask"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        dispatcher.utter_message("Hi It's bot! action_try_ask")
+        return []    
+
+
+class ActionAskGpt_TryReply(Action):
+    def name(self) -> Text:
+        return "action_try_reply"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        dispatcher.utter_message("Hi It's bot! action_try_reply")
+        return []    

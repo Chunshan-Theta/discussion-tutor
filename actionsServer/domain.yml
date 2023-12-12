@@ -3,10 +3,17 @@ version: "3.1"
 
 responses:
   utter_ask_next_step:
-  - text: "如果沒有問題, 請說`繼續`. "
-  
-  
-
+    - text: "如果沒有問題, 請說`繼續`. "
+  utter_confirm_to_nuclear_power:
+    - text: "這邊我們要介紹 `核能`"
+  utter_confirm_to_discussion:
+    - text: "這邊我們要介紹 `討論`"
+  utter_confirm_to_try_ask:
+    - text: "這邊我們要介紹 `詢問`"
+  utter_confirm_to_try_reply:
+    - text: "這邊我們要介紹 `回復`"
+  utter_finish:
+    - text: `活動結束"
 
 session_config:
   session_expiration_time: 60
@@ -39,5 +46,5 @@ slots:
     initial_value: "intro_bot"
     mappings:
       - type: custom
-
+    influence_conversation: true
 

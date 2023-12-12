@@ -10,6 +10,7 @@ stories:
       - action: utter_ask_next_step
       - intent: confirm
       - action: action_solt_stage_set_intro_nuclear_power
+      - action: utter_confirm_to_nuclear_power
 
   - story: intro_bot_02
     steps:
@@ -25,3 +26,119 @@ stories:
       - action: action_introduce_the_bot
       - intent: confirm
       - action: action_solt_stage_set_intro_nuclear_power
+      - action: utter_confirm_to_nuclear_power
+
+  - story: intro_uncler_power_01
+    steps:
+      - slot_was_set:
+        - stage: intro_nuclear_power
+      - intent: hi
+      - action: action_introduce_nuclear_power
+      - action: utter_ask_next_step
+      - intent: confirm
+      - action: action_solt_stage_set_intro_discussion
+      - action: utter_confirm_to_discussion
+
+  - story: intro_uncler_power_02
+    steps:
+      - slot_was_set:
+        - stage: intro_nuclear_power
+      - intent: hi
+      - action: action_introduce_nuclear_power
+      - action: utter_ask_next_step
+      - intent: faq
+      - action: action_introduce_nuclear_power
+      - action: utter_ask_next_step
+      - intent: faq
+      - action: action_introduce_nuclear_power
+      - intent: confirm
+      - action: action_solt_stage_set_intro_discussion
+      - action: utter_confirm_to_discussion
+
+  - story: intro_discussion_01
+    steps:
+      - slot_was_set:
+        - stage: intro_discussion
+      - intent: hi
+      - action: action_introduce_discussion
+      - action: utter_ask_next_step
+      - intent: confirm
+      - action: action_solt_stage_set_try_ask
+      - action: utter_confirm_to_try_ask
+
+  - story: intro_discussion_02
+    steps:
+      - slot_was_set:
+        - stage: intro_discussion
+      - intent: hi
+      - action: action_introduce_discussion
+      - action: utter_ask_next_step
+      - intent: faq
+      - action: action_introduce_discussion
+      - action: utter_ask_next_step
+      - intent: faq
+      - action: action_introduce_discussion
+      - intent: confirm
+      - action: action_solt_stage_set_try_ask
+      - action: utter_confirm_to_try_ask
+
+  - story: intro_try_ask_01
+    steps:
+      - slot_was_set:
+        - stage: intro_try_ask
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_ask
+      - slot_was_set:
+        - stage: intro_try_ask
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_ask
+
+  - story: intro_try_ask_02
+    steps:
+      - slot_was_set:
+        - stage: intro_try_ask
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_ask
+      - slot_was_set:
+        - stage: intro_try_reply
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_reply
+
+  - story: intro_try_reply_01
+    steps:
+      - slot_was_set:
+        - stage: intro_try_reply
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_reply
+      - slot_was_set:
+        - stage: intro_try_reply
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: action_try_reply
+
+  - story: finish
+    steps:
+      - slot_was_set:
+        - stage: finish
+      - or:
+        - intent: faq
+        - intent: hi
+        - intent: confirm
+      - action: utter_finish

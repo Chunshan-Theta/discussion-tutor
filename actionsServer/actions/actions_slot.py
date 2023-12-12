@@ -27,10 +27,26 @@ def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
 class ActionSoltStageSetIntroNuclearPower(Action):
     def name(self) -> Text:
         return "action_solt_stage_set_intro_nuclear_power"
-
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
         # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
         return [SlotSet("stage", "intro_nuclear_power")]
+
+class ActionSoltStageSetIntroDiscussion(Action):
+    def name(self) -> Text:
+        return "action_solt_stage_set_intro_discussion"
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
+        return [SlotSet("stage", "intro_discussion")]
+
+class ActionSoltStageSetTryAsk(Action):
+    def name(self) -> Text:
+        return "action_solt_stage_set_try_ask"
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
+        return [SlotSet("stage", "intro_try_ask")]
