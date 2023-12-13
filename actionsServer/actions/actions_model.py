@@ -11,7 +11,7 @@ from typing import Any, Text, Dict, List
 from rasa_sdk.events import SlotSet
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from .models import callGPT_AnalyzeStory, decodeAnalyzeStory, callGPTStoryExtend
+from .models import callGPT_IntroBot
 import json
 import os
 from .document import *
@@ -35,22 +35,12 @@ class ActionAskGpt_IntroTheBot(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        dispatcher.utter_message("Hi It's bot!")
-        return []    
-        # userText: str = "我選擇是:"+getUserText(tracker)
-        # botReply: str = callGPTStoryExtend(getUserId(tracker), userText)
+        dispatcher.utter_message("Hi It's bot! Intro bot")
+        # userText: str = getUserText(tracker)
+        # botReply: str = callGPT_IntroBot(getUserId(tracker), userText)
         # for m in botReply.split("\n"):
         #     dispatcher.utter_message(text=str(m))
-
-        # if "GAMEOVER" in botReply or "遊戲結束" in botReply:
-
-        #     dispatcher.utter_message(text="遊戲將要結束 進行分析 沒問題請說繼續")
-        #     return [
-        #         SlotSet("story_started", False),
-        #         SlotSet("story_finished", True)
-        #     ]
-        # else:
-        #     return []
+        return []
 
 class ActionAskGpt_NuclearPower(Action):
     def name(self) -> Text:

@@ -13,7 +13,7 @@ responses:
   utter_confirm_to_try_reply:
     - text: "這邊我們要介紹 `回復`"
   utter_finish:
-    - text: `活動結束"
+    - text: "活動結束"
 
 session_config:
   session_expiration_time: 60
