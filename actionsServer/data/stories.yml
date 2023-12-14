@@ -5,7 +5,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_bot
-      - intent: hi
+      - intent: faq
       - action: action_introduce_the_bot
       - action: utter_ask_next_step
       - intent: confirm
@@ -16,7 +16,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_bot
-      - intent: hi
+      - intent: faq
       - action: action_introduce_the_bot
       - action: utter_ask_next_step
       - intent: faq
@@ -32,7 +32,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_nuclear_power
-      - intent: hi
+      - intent: faq
       - action: action_introduce_nuclear_power
       - action: utter_ask_next_step
       - intent: confirm
@@ -43,7 +43,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_nuclear_power
-      - intent: hi
+      - intent: faq
       - action: action_introduce_nuclear_power
       - action: utter_ask_next_step
       - intent: faq
@@ -59,7 +59,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_discussion
-      - intent: hi
+      - intent: faq
       - action: action_introduce_discussion
       - action: utter_ask_next_step
       - intent: confirm
@@ -70,7 +70,7 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_discussion
-      - intent: hi
+      - intent: faq
       - action: action_introduce_discussion
       - action: utter_ask_next_step
       - intent: faq
@@ -86,59 +86,111 @@ stories:
     steps:
       - slot_was_set:
         - stage: intro_try_ask
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+      - intent: faq
       - action: action_try_ask
-      - slot_was_set:
-        - stage: intro_try_ask
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+      - action: utter_ask_next_step
+      - intent: faq
       - action: action_try_ask
+      - action: utter_ask_next_step
 
   - story: intro_try_ask_02
     steps:
       - slot_was_set:
         - stage: intro_try_ask
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+      - intent: faq
       - action: action_try_ask
-      - slot_was_set:
-        - stage: intro_try_reply
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
-      - action: action_try_reply
+      - action: utter_ask_next_step
+      - intent: confirm
+      - action: action_solt_stage_set_try_ask
+      - action: utter_confirm_to_try_reply
+      
 
   - story: intro_try_reply_01
     steps:
       - slot_was_set:
         - stage: intro_try_reply
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+      - intent: faq
       - action: action_try_reply
-      - slot_was_set:
-        - stage: intro_try_reply
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+      - action: utter_ask_next_step
+      - intent: faq
       - action: action_try_reply
+      - action: utter_ask_next_step
 
-  - story: finish
+  - story: intro_try_reply_02
     steps:
       - slot_was_set:
-        - stage: finish
-      - or:
-        - intent: faq
-        - intent: hi
-        - intent: confirm
+        - stage: intro_try_reply
+      - intent: faq
+      - action: action_try_reply
+      - action: utter_ask_next_step
+      - intent: confirm
       - action: utter_finish
+
+
+  - story: interactive_story_1
+    steps:
+    - intent: faq
+    - action: action_introduce_the_bot
+    - action: utter_ask_next_step
+    - intent: faq
+    - action: action_introduce_the_bot
+    - action: utter_ask_next_step
+    - intent: confirm
+    - action: action_solt_stage_set_intro_nuclear_power
+    - slot_was_set:
+      - stage: intro_nuclear_power
+    - action: utter_confirm_to_nuclear_power
+    - intent: faq
+    - action: action_introduce_nuclear_power
+    - action: utter_ask_next_step
+    - intent: faq
+    - action: action_introduce_nuclear_power
+    - action: utter_ask_next_step
+    - intent: confirm
+    - intent: faq
+    - action: action_introduce_nuclear_power
+    - action: utter_ask_next_step
+    - intent: confirm
+    - action: action_solt_stage_set_intro_discussion
+    - slot_was_set:
+      - stage: intro_discussion
+    - action: utter_confirm_to_discussion
+
+  - story: interactive_story_2
+    steps:
+    - intent: faq
+    - action: action_introduce_the_bot
+    - action: utter_ask_next_step
+    - intent: nlu_fallback
+    - intent: faq
+    - action: action_introduce_the_bot
+    - action: utter_ask_next_step
+    - intent: nlu_fallback
+    - intent: faq
+    - action: action_introduce_the_bot
+    - intent: confirm
+    - action: action_solt_stage_set_intro_nuclear_power
+    - slot_was_set:
+      - stage: intro_nuclear_power
+    - action: utter_confirm_to_nuclear_power
+    - intent: nlu_fallback
+    - intent: faq
+    - action: action_introduce_nuclear_power
+    - action: utter_ask_next_step
+    - intent: confirm
+    - action: action_solt_stage_set_intro_discussion
+    - slot_was_set:
+      - stage: intro_discussion
+    - action: utter_confirm_to_discussion
+    - intent: nlu_fallback
+    - intent: faq
+    - action: action_introduce_discussion
+    - action: utter_ask_next_step
+    - intent: faq
+    - action: action_introduce_discussion
+    - action: utter_ask_next_step
+    - intent: confirm
+    - action: action_solt_stage_set_try_ask
+    - slot_was_set:
+      - stage: intro_try_ask
+    - action: utter_confirm_to_try_ask

@@ -23,7 +23,6 @@ def getUserLatestMEG(t: Tracker): return t.latest_message
 def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
 
 
-
 class ActionSoltStageSetIntroNuclearPower(Action):
     def name(self) -> Text:
         return "action_solt_stage_set_intro_nuclear_power"
@@ -41,6 +40,24 @@ class ActionSoltStageSetIntroDiscussion(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
         return [SlotSet("stage", "intro_discussion")]
+
+class ActionSoltStageSetTryReply(Action):
+    def name(self) -> Text:
+        return "action_solt_stage_set_try_reply"
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
+        return [SlotSet("stage", "intro_try_reply")]
+
+class ActionSoltStageSetFinish(Action):
+    def name(self) -> Text:
+        return "action_solt_stage_set_try_finish"
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        # dispatcher.utter_message(text="CALL CUSTOM ACTION `Action_Solt_Welcome_Stage_Set_False`")
+        return [SlotSet("stage", "intro_try_finish")]
 
 class ActionSoltStageSetTryAsk(Action):
     def name(self) -> Text:

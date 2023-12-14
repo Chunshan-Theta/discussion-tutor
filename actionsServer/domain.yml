@@ -1,50 +1,44 @@
-version: "3.1"
-
-
+version: '3.1'
 responses:
   utter_ask_next_step:
-    - text: "如果沒有問題, 請說`繼續`. "
+  - text: '如果沒有問題, 請說`繼續`. '
   utter_confirm_to_nuclear_power:
-    - text: "這邊我們要介紹 `核能`"
+  - text: 這邊我們要介紹 `核能`
   utter_confirm_to_discussion:
-    - text: "這邊我們要介紹 `討論`"
+  - text: 這邊我們要介紹 `討論`
   utter_confirm_to_try_ask:
-    - text: "這邊我們要介紹 `詢問`"
+  - text: 這邊我們要介紹 `詢問`
   utter_confirm_to_try_reply:
-    - text: "這邊我們要介紹 `回復`"
+  - text: 這邊我們要介紹 `回復`
   utter_finish:
-    - text: "活動結束"
-
+  - text: 活動結束
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
-
-
 actions:
-    - action_introduce_the_bot
-    - action_introduce_nuclear_power
-    - action_introduce_discussion
-    - action_trying_asking
-    - action_trying_replying
-    - action_summary
-    - action_solt_stage_set_intro_nuclear_power
-    - action_solt_stage_set_intro_discussion
-    - action_solt_stage_set_try_ask
-    - action_solt_stage_set_try_reply
-    - action_solt_stage_set_summary
-    - utter_ask_next_step
-
-
+- utter_confirm_to_try_ask
+- action_introduce_nuclear_power
+- utter_confirm_to_nuclear_power
+- action_introduce_the_bot
+- utter_confirm_to_discussion
+- action_solt_stage_set_intro_nuclear_power
+- action_introduce_discussion
+- action_solt_stage_set_try_ask
+- utter_ask_next_step
+- action_solt_stage_set_intro_discussion
+- action_try_ask
+- action_try_reply
+- action_summary
+- action_solt_stage_set_try_reply
+- action_solt_stage_set_summary
 intents:
-  - faq
-  - hi
-  - confirm
-
+- confirm
+- faq
+- hi
 slots:
   stage:
     type: text
-    initial_value: "intro_bot"
+    initial_value: intro_bot
     mappings:
-      - type: custom
+    - type: custom
     influence_conversation: true
-
