@@ -25,20 +25,12 @@ def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
 
 class ActionUtterStoryStart(Action):
     def name(self) -> Text:
-        return "action_story_start"
+        return "action_utter_finish"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        stageObj: Stage = mentaltutor_storiesGamer
-        for m in [
-            "請詳讀以下情況，並根據自身情況思考後回應問題。",
-            "您可以選擇提供您的選項，或是直接輸入你的想法"
-        ]:
-            dispatcher.utter_message(text=str(m))
-
-        for m in stageObj.action["both"]:
-            dispatcher.utter_message(text=str(m))
+        dispatcher.utter_message(text="結束")
 
         return []

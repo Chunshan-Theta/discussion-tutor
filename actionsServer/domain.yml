@@ -16,25 +16,27 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 actions:
-- utter_confirm_to_try_ask
-- action_introduce_nuclear_power
 - utter_confirm_to_nuclear_power
-- action_introduce_the_bot
+- action_introduce_discussion
 - utter_confirm_to_discussion
 - action_solt_stage_set_intro_nuclear_power
-- action_introduce_discussion
-- action_solt_stage_set_try_ask
+- action_introduce_the_bot
 - utter_ask_next_step
+- action_solt_stage_set_try_ask
 - action_solt_stage_set_intro_discussion
 - action_try_ask
-- action_try_reply
-- action_summary
+- utter_confirm_to_try_ask
+- action_solt_stage_set_try_finish
 - action_solt_stage_set_try_reply
+- utter_confirm_to_try_reply
+- action_utter_finish
+- utter_finish
+- action_introduce_nuclear_power
+- action_try_reply
 - action_solt_stage_set_summary
 intents:
 - confirm
 - faq
-- hi
 slots:
   stage:
     type: text

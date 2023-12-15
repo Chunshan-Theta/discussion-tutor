@@ -146,7 +146,9 @@ docker-compose up test-model
 
 - interactive
 ```
-docker run -it -v ./actionsServer:/app rasa/rasa:3.6.6-full interactive
+
+docker-compose up rasa-actionServer
+docker exec -it mentor-discussion-precursor_rasa-actionServer_1 /bin/bash -c "rasa interactive"
 ```
 
 - Testing In docker Container
