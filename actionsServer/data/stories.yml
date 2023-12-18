@@ -5,7 +5,7 @@ stories:
 - story: intro_bot_01
   steps:
     - intent: faq
-    - action: action_action_ActionAskGpt
+    - action: action_ActionAskGpt
     - action: utter_ask_next_step
 
 - story: intro_bot_02

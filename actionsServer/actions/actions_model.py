@@ -36,8 +36,11 @@ class ActionAskGpt(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         userStatus = getByKey(client,getUserId(tracker))
+        if userStatus is None:
+            userStatus = {}
         if "stage" not in userStatus:
             userStatus['stage'] = "intro_bot"
+        dispatcher.utter_message("Hi It'ActionAskGpt")
 
         ##
         if userStatus['stage'] == "intro_bot":
@@ -55,7 +58,7 @@ class ActionAskGpt(Action):
         elif userStatus['stage'] == "intro_reply":
             dispatcher.utter_message("Hi It's bot! intro_reply")
 
-        else userStatus['stage'] == "finish":
+        elif userStatus['stage'] == "finish":
             dispatcher.utter_message("Hi It's bot! finish")
 
         else:
@@ -73,6 +76,8 @@ class ActionGoNext(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         userStatus = getByKey(client,getUserId(tracker))
+        if userStatus is None:
+            userStatus = {}
         if "stage" not in userStatus:
             userStatus['stage'] = "intro_bot"
 
@@ -98,7 +103,7 @@ class ActionGoNext(Action):
             dispatcher.utter_message("intro_reply -> finish")
             userStatus['stage'] = "finish"
 
-        else userStatus['stage'] == "finish":
+        elif userStatus['stage'] == "finish":
             dispatcher.utter_message("Hi It's bot! finish")
 
         else:
