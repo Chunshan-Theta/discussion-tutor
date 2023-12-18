@@ -27,62 +27,82 @@ assert(checkClient(client))
 
 
 
-class ActionAskGpt_IntroTheBot(Action):
+class ActionAskGpt(Action):
     def name(self) -> Text:
-        return "action_introduce_the_bot"
+        return "action_ActionAskGpt"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        dispatcher.utter_message("Hi It's bot! Intro bot")
-        # userText: str = getUserText(tracker)
-        # botReply: str = callGPT_IntroBot(getUserId(tracker), userText)
-        # for m in botReply.split("\n"):
-        #     dispatcher.utter_message(text=str(m))
+        userStatus = getByKey(client,getUserId(tracker))
+        if "stage" not in userStatus:
+            userStatus['stage'] = "intro_bot"
+
+        ##
+        if userStatus['stage'] == "intro_bot":
+            dispatcher.utter_message("Hi It's bot! intro_bot")
+
+        elif userStatus['stage'] == "intro_unclear_power":
+            dispatcher.utter_message("Hi It's bot! intro_unclear_power")
+
+        elif userStatus['stage'] == "intro_discussion":
+            dispatcher.utter_message("Hi It's bot! intro_discussion")
+
+        elif userStatus['stage'] == "intro_ask":
+            dispatcher.utter_message("Hi It's bot! intro_ask")
+
+        elif userStatus['stage'] == "intro_reply":
+            dispatcher.utter_message("Hi It's bot! intro_reply")
+
+        else userStatus['stage'] == "finish":
+            dispatcher.utter_message("Hi It's bot! finish")
+
+        else:
+            dispatcher.utter_message("[500] Action Stage Error")
+        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
         return []
 
-class ActionAskGpt_NuclearPower(Action):
+
+class ActionGoNext(Action):
     def name(self) -> Text:
-        return "action_introduce_nuclear_power"
+        return "action_ActionGoNext"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        dispatcher.utter_message("Hi It's bot! NuclearPower")
-        return []    
+        userStatus = getByKey(client,getUserId(tracker))
+        if "stage" not in userStatus:
+            userStatus['stage'] = "intro_bot"
 
-class ActionAskGpt_Discussion(Action):
-    def name(self) -> Text:
-        return "action_introduce_discussion"
+        ##
+        if userStatus['stage'] == "intro_bot":
+            dispatcher.utter_message("intro_bot -> intro_unclear_power")
+            userStatus['stage'] = "intro_unclear_power"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        elif userStatus['stage'] == "intro_unclear_power":
+            dispatcher.utter_message("intro_unclear_power -> intro_discussion")
+            userStatus['stage'] = "intro_discussion"
+            
 
-        dispatcher.utter_message("Hi It's bot! Discussion")
-        return []    
+        elif userStatus['stage'] == "intro_discussion":
+            dispatcher.utter_message("intro_discussion -> intro_ask")
+            userStatus['stage'] = "intro_ask"
 
-class ActionAskGpt_TryAsk(Action):
-    def name(self) -> Text:
-        return "action_try_ask"
+        elif userStatus['stage'] == "intro_ask":
+            dispatcher.utter_message("intro_ask -> intro_reply")
+            userStatus['stage'] = "intro_reply"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        elif userStatus['stage'] == "intro_reply":
+            dispatcher.utter_message("intro_reply -> finish")
+            userStatus['stage'] = "finish"
 
-        dispatcher.utter_message("Hi It's bot! action_try_ask")
-        return []    
+        else userStatus['stage'] == "finish":
+            dispatcher.utter_message("Hi It's bot! finish")
 
+        else:
+            dispatcher.utter_message("[500] Action Stage Error")
 
-class ActionAskGpt_TryReply(Action):
-    def name(self) -> Text:
-        return "action_try_reply"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
-        dispatcher.utter_message("Hi It's bot! action_try_reply")
+        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
         return []    
