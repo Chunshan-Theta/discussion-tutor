@@ -45,17 +45,22 @@ def setHistory(userId:str, memory: List[Any]):
 def getHistory(userId:str): return getByKey(client, userId + memoryTags.historyOfTag)
 
 #
-def callGPT_IntroBot(userId: str,userText: str) -> str:
+def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
+    
+    if Stype == "intro_bot":
+        stage = stage_intro_bot
+    else:
+        return "callGPTByStage Done."
 
     botReply: str = ""
     prompts = [{
         "role": "system",
-        "content": stage_intro_bot.situation["role"]
+        "content": stage.situation["role"]
     }]
-    for unit in stage_intro_bot.target['rag']:
+    for unit in stage.target['rag']:
         prompts.append({
                     "role": "assistant",
-                    "content": "\n".join(stage_intro_bot.action["both"])
+                    "content": "\n".join(stage.action["toAgent"])
                 })
         prompts.append({
                     "role": "user",
@@ -67,14 +72,14 @@ def callGPT_IntroBot(userId: str,userText: str) -> str:
                 })
     prompts.append({
                     "role": "assistant",
-                    "content": "\n".join(stage_intro_bot.action["both"])
+                    "content": "\n".join(stage.action["toAgent"])
                 })
     prompts.append({
                     "role": "user",
                     "content": userText
                 })
-    botReply += "\n***".join([str(unit) for unit in prompts])
-    botReply += "\n"+callGpt(prompts, 0.5)
+    botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
+    botReply += "\n"+callGpt(prompts, 0.3)
     
 
     return botReply       

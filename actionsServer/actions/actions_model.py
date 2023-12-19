@@ -11,7 +11,7 @@ from typing import Any, Text, Dict, List
 from rasa_sdk.events import SlotSet
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from .models import callGPT_IntroBot
+from .models import *
 import json
 import os
 from .document import *
@@ -46,6 +46,7 @@ class ActionAskGpt(Action):
         if userStatus['stage'] == "intro_bot":
             dispatcher.utter_message("Hi It's bot! intro_bot")
 
+
         elif userStatus['stage'] == "intro_unclear_power":
             dispatcher.utter_message("Hi It's bot! intro_unclear_power")
 
@@ -63,6 +64,11 @@ class ActionAskGpt(Action):
 
         else:
             dispatcher.utter_message("[500] Action Stage Error")
+            return []
+
+            
+        for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
+            dispatcher.utter_message(line)       
         updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
         return []
 
