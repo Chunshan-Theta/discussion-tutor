@@ -12,3 +12,4 @@ stories:
   steps:
     - intent: confirm
     - action: action_ActionGoNext
+    - action: utter_ask_next_step

@@ -49,13 +49,23 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
     
     if Stype == "intro_bot":
         stage = stage_intro_bot
+    elif Stype == "intro_unclear_power":
+        stage = stage_intro_unclear_power
+    elif Stype == "intro_discussion":
+        stage = stage_intro_discussion
+    elif Stype == "intro_ask":
+        stage = stage_try_ask
+
+    elif Stype == "intro_reply":
+        stage = stage_try_reply
+
     else:
         return "callGPTByStage Done."
 
     botReply: str = ""
     prompts = [{
         "role": "system",
-        "content": stage.situation["role"]
+        "content": stage.situation["role"]+stage.situation["task"]
     }]
     for unit in stage.target['rag']:
         prompts.append({
@@ -78,8 +88,10 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
                     "role": "user",
                     "content": userText
                 })
-    botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
+    # botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
     botReply += "\n"+callGpt(prompts, 0.3)
+    if "continuer" in stage.action:
+        botReply +="\n"+stage.action["continuer"]
     
 
     return botReply       

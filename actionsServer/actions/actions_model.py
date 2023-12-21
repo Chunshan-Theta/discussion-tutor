@@ -15,6 +15,7 @@ from .models import *
 import json
 import os
 from .document import *
+from .stages import *
 
 def send(d: CollectingDispatcher, obj: Any): d.utter_message(str(obj))
 def getSlot_StoryStage(t: Tracker): return t.get_slot('story_stage')
@@ -40,28 +41,31 @@ class ActionAskGpt(Action):
             userStatus = {}
         if "stage" not in userStatus:
             userStatus['stage'] = "intro_bot"
-        dispatcher.utter_message("Hi It'ActionAskGpt")
+            # dispatcher.utter_message("***ActionAskGpt")
+            dispatcher.utter_message(stage_intro_bot.action["opener"])
 
         ##
         if userStatus['stage'] == "intro_bot":
-            dispatcher.utter_message("Hi It's bot! intro_bot")
-
-
+            # dispatcher.utter_message("***intro_bot")
+            pass
         elif userStatus['stage'] == "intro_unclear_power":
-            dispatcher.utter_message("Hi It's bot! intro_unclear_power")
-
+            # dispatcher.utter_message("***intro_unclear_power")
+            pass
         elif userStatus['stage'] == "intro_discussion":
-            dispatcher.utter_message("Hi It's bot! intro_discussion")
+            # dispatcher.utter_message("***intro_discussion")
+            pass
 
         elif userStatus['stage'] == "intro_ask":
-            dispatcher.utter_message("Hi It's bot! intro_ask")
+            # dispatcher.utter_message("***intro_ask")
+            pass
 
         elif userStatus['stage'] == "intro_reply":
-            dispatcher.utter_message("Hi It's bot! intro_reply")
+            # dispatcher.utter_message("***intro_reply")
+            pass
 
         elif userStatus['stage'] == "finish":
-            dispatcher.utter_message("Hi It's bot! finish")
-
+            # dispatcher.utter_message("***finish")
+            return []
         else:
             dispatcher.utter_message("[500] Action Stage Error")
             return []
@@ -89,28 +93,32 @@ class ActionGoNext(Action):
 
         ##
         if userStatus['stage'] == "intro_bot":
-            dispatcher.utter_message("intro_bot -> intro_unclear_power")
+            dispatcher.utter_message("***intro_bot -> intro_unclear_power")
+            dispatcher.utter_message(stage_intro_unclear_power.action["opener"])
             userStatus['stage'] = "intro_unclear_power"
 
         elif userStatus['stage'] == "intro_unclear_power":
-            dispatcher.utter_message("intro_unclear_power -> intro_discussion")
+            dispatcher.utter_message("***intro_unclear_power -> intro_discussion")
+            dispatcher.utter_message(stage_intro_discussion.action["opener"])
             userStatus['stage'] = "intro_discussion"
             
 
         elif userStatus['stage'] == "intro_discussion":
-            dispatcher.utter_message("intro_discussion -> intro_ask")
+            dispatcher.utter_message("***intro_discussion -> intro_ask")
+            dispatcher.utter_message(stage_try_ask.action["opener"])
             userStatus['stage'] = "intro_ask"
 
         elif userStatus['stage'] == "intro_ask":
-            dispatcher.utter_message("intro_ask -> intro_reply")
+            dispatcher.utter_message("***intro_ask -> intro_reply")
+            dispatcher.utter_message(stage_try_reply.action["opener"])
             userStatus['stage'] = "intro_reply"
 
         elif userStatus['stage'] == "intro_reply":
-            dispatcher.utter_message("intro_reply -> finish")
+            dispatcher.utter_message("***intro_reply -> finish")
             userStatus['stage'] = "finish"
 
         elif userStatus['stage'] == "finish":
-            dispatcher.utter_message("Hi It's bot! finish")
+            dispatcher.utter_message("***Hi It's bot! finish")
 
         else:
             dispatcher.utter_message("[500] Action Stage Error")
