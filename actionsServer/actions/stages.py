@@ -25,41 +25,51 @@ class StageLabel:
             self.__dict__.update({})
 
 
-memoryTags = MemoryLabel({
-    "historyOfTag": "historyOfTag"
-})
 
        
 stage_intro_bot = Stage({
-    "system": {},
+    "system": "reply/ans",
     "situation": {
-        'role': "Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. If uncertain or lacking confidence in the answer, it's acceptable to respectfully decline rather than provide inaccurate information. ",
+    'role': """
+        Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. 
+        If uncertain or lacking confidence in the answer,it's acceptable to respectfully decline rather than provide inaccurate information. 
+        """,
 		'task': "你身為前導機器人會提供使用者來問答。此外你並沒有其他的身分。",
     },
     "target": {
         
         'rag': [
-            ["Hi", "哈囉，我是課程前導機器人，可以幫助學生透過問答來了解更多知識"],
-            ["你是誰","我是一個由人工智慧技術建構的語言模製的課程前導機器人，可以幫助學生來了解論證活動。\n沒有問題的話，接下去會開始引導流程。"],
+            ["Hi", "哈囉，我是論證活動前導機器人，可以幫助學生透過問答來了解更多知識"],
+            ["你是誰","我是一個由人工智慧技術建構的語言模製的論證活動前導機器人，可以幫助學生來了解論證活動。\n沒有問題的話，接下去會開始引導流程。"],
+            ["這是什麼活動","這是一個論證活動，主題是台灣適不適合發展核能發電。"],
+            ["怎樣才能參加這個活動","這是一個不定時的論證活動，詳情請洽中央網學所 吳研究室。"],
+
         ],
     },
     "action": {
-        'toAgent': ["我是課程前導機器人，可以幫助學生透過問答來了解更多知識，有什麼想問我嗎" ],
-        'continuer': "有關於我的任何問題嗎？",
-        'opener': "我是一個由人工智慧技術建構的語言模製的課程前導機器人，可以幫助學生透過問答來了解更多知識"
+        'toAgent': ["我是論證活動前導機器人，可以幫助學生透過問答來了解更多知識，有什麼想問我嗎" ],
+        'continuer': "有關於我的任何問題嗎？ 如果沒有請說繼續",
+        'opener': """
+        Hi,您好。歡迎使用論證活動前導機器人，我是一個由人工智慧技術建構的論證活動前導機器人，
+        目標是提供學生在進行論證前掌握一些基本的論證與核能發電的知識。
+        同時也可以回應該活動的一些基本資訊。
+        """
     }
 })
 
 stage_intro_unclear_power = Stage({
-    "system": {},
+    "system": "reply/ans",
     "situation": {
-        'role': "Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. If uncertain or lacking confidence in the answer, it's acceptable to respectfully decline rather than provide inaccurate information. ",
+    'role': """
+        Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. 
+        If uncertain or lacking confidence in the answer,it's acceptable to respectfully decline rather than provide inaccurate information. 
+        """,
 		'task': "你需要協助使用者了解核能發電的特徵和定義，和國家基於核能進行發電的優勢劣勢。此外你並沒有其他的身分。"
     },
     "target": {
         'rag': [
-            ["Hi", "哈囉，我是課程前導機器人，現在我們在介紹核能發電的階段，這邊能協助你更了解核能發電的好處壞處，有什麼想問我嗎？"],
-            ["你是誰","我是一個由人工智慧技術建構的語言模製的課程前導機器人，可以幫助學生來了解核能發電。"],
+            ["Hi", "哈囉，我是論證活動前導機器人，現在我們在介紹核能發電的階段，這邊能協助你更了解核能發電的好處壞處，有什麼想問我嗎？"],
+            ["你是誰","我是一個由人工智慧技術建構的語言模製的論證活動前導機器人，可以幫助學生來了解核能發電。"],
             ["核能發電是什麼？","核能發電是利用核裂變或核聚變產生能量的方式，用來發電供應能源。"],
             ["海島型國家為何對核能感興趣？","海島型國家通常能源資源有限，核能提供穩定且可靠的能源來源，減少對進口能源的依賴。"],
             ["核能對海島型國家的影響是什麼？","它能增加自主能源供應，降低對外部能源的需求，提高能源安全性。"],
@@ -74,21 +84,24 @@ stage_intro_unclear_power = Stage({
     },
     "action": {
         'opener': "您好，這邊想說一些關於核能發展的特徵與優劣。\n 核能發電是透過核裂變產生能量，可提供穩定且大量的電力。\n對海島型國家的台灣而言，核能具有重要意義，因為它們通常能協助資源有限且能源供應不穩定的國家穩定發展。\n 核能能提供穩定的基本能源，減少對進口能源的依賴，增加自主能源供應。\n 然而，核能發電也有安全風險和核廢料處理問題，對環境和人類健康構成潛在威脅。\n 在海島型國家中，地理位置有限可能增加風險，需要更謹慎的安全措施和廢料處理計劃。",
-        'toAgent': ["哈囉，我是課程前導機器人，這邊我可以跟你介紹核能，有什麼想問我嗎" ],
-        'continuer': "請問還有什麼關於核能的問題嗎?"
+        'toAgent': ["哈囉，我是論證活動前導機器人，這邊我可以跟你介紹核能，有什麼想問我嗎" ],
+        'continuer': "請問還有什麼關於核能的問題嗎? 如果沒有請說繼續"
     }
 })
 
 stage_intro_discussion = Stage({
-    "system": {},
+    "system": "reply/ans",
     "situation": {
-        'role': "Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. If uncertain or lacking confidence in the answer, it's acceptable to respectfully decline rather than provide inaccurate information. ",
+    'role': """
+        Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. 
+        If uncertain or lacking confidence in the answer,it's acceptable to respectfully decline rather than provide inaccurate information. 
+        """,
         'task': "你需要協助使用者了解論證的特徵和定義，和學生必須學習論證的重要性。此外你並沒有其他的身分。"
     },
     "target": {
         'rag': [
-            ["Hi", "哈囉，我是課程前導機器人，現在我們在介紹論證特徵的階段，這邊能協助你更了解論證的特徵和好處壞處，有什麼想問我嗎？"],
-            ["你是誰","我是一個由人工智慧技術建構的語言模製的課程前導機器人，可以幫助學生來了解論證特徵。"],
+            ["Hi", "哈囉，我是論證活動前導機器人，現在我們在介紹論證特徵的階段，這邊能協助你更了解論證的特徵和好處壞處，有什麼想問我嗎？"],
+            ["你是誰","我是一個由人工智慧技術建構的語言模製的論證活動前導機器人，可以幫助學生來了解論證特徵。"],
             ["什麼是論證？","論證是以邏輯和證據來支持觀點或立場的過程。"],
             ["論證的特徵是什麼？","論證應具有合理性、邏輯性和可信度，並包含事實、推理和證據支持。"],
             ["為什麼學生需要學習論證？","學習論證有助於培養思辨能力、分析技巧和說服力，提升對複雜問題的理解和解決能力。"],
@@ -103,16 +116,19 @@ stage_intro_discussion = Stage({
     },
     "action": {
         'opener': "您好，這邊想說一些關於論證的特徵與優劣。\n 論證是以邏輯和證據支持觀點的過程。它具有合理性、邏輯性和可信度，需包含事實、推理和證據支持。\n 學習論證重要，因為它培養思辨能力、分析技巧和說服力，提升對複雜問題的理解和解決能力。\n 對學生而言，掌握論證能力有助於表達思想、澄清觀點，加強自信，並在學業及未來生涯中更有競爭力。",
-        'toAgent': ["哈囉，我是課程前導機器人，這邊我可以跟你介紹論證，有什麼想問我嗎" ],
-        'continuer': "請問還有什麼關於論證的問題嗎？"
+        'toAgent': ["哈囉，我是論證活動前導機器人，這邊我可以跟你介紹論證，有什麼想問我嗎" ],
+        'continuer': "請問還有什麼關於論證的問題嗎？ 如果沒有請說繼續"
     }
 })
 
 stage_try_ask = Stage({
-    "system": {},
+    "system": "practice",
     "situation": {
-        'role': "Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. If uncertain or lacking confidence in the answer, it's acceptable to respectfully decline rather than provide inaccurate information. ",
-        'task': "你需要協助使用者了解如何進行一個好的提問，和好的提問能帶來的優勢劣勢。此外你並沒有其他的身分。"
+    'role': """
+        Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. 
+        If uncertain or lacking confidence in the answer,it's acceptable to respectfully decline rather than provide inaccurate information. 
+        """,
+        'task': "你需要協助使用者了解如何進行一個好的提問，和好的提問能帶來的優勢劣勢，之後使用者會持續提出問題，不要回應這個問題，而是針對該問題的描述來評斷好壞和給出原因。此外你並沒有其他的身分。"
     },
     "target": {
         'rag': [
@@ -121,21 +137,24 @@ stage_try_ask = Stage({
             ["核能發電對經濟和能源供應的影響是什麼？","良好問題： 此問題針對整體影響提出，有助於全面評估核能的經濟性和能源供應。考慮到經濟和能源供應方面，這個問題有助於獲取整體洞察力。"],
             ["核能發電是否只是一種致命的核災等待發生？","不良問題：這個問題有強烈的負面假設，可能引發情緒化和片面性的回答。這樣的問題主要著眼於負面結果，不夠客觀，可能阻礙對核能的全面評估。"],
             ["核能是否只是為了獲利而置人類生存於風險之中？","不良問題：這問題含有負面假設和情緒性詞語，可能導致回答者偏離客觀事實。負面假設會影響評估，不利於建設性討論。"],
-            ["核能發電是否是對環境的破壞和毀滅？","不良問題：此問題措辭激烈，可能引起情緒化回應，而非基於事實的討論。問題含有極端的描述，可能導致非理性回應，不利於客觀討論。"]
+            ["核能發電是否會對環境的破壞和毀滅？","不良問題：此問題措辭激烈，可能引起情緒化回應，而非基於事實的討論。問題含有極端的描述，可能導致非理性回應，不利於客觀討論。"]
         ],
     },
     "action": {
         'opener': "您好，這邊想說一些關於如何進行一個好的提問。\n 好的提問是清晰、具體且明確的。\n 描述問題的背景和目標，避免含糊不清或過於廣泛。使用清晰的語言和正式的格式，讓人易於理解並且願意回答。\n 優秀的提問能幫助提供者更快速準確地理解問題，增加獲得有用回答的機會，同時也提升溝通效率和資訊的準確性。\n 這邊我們提供一個嘗試提問的機會，請以核能發電為主題提出問題，我會根據你的問題來給出評語",
-        'toAgent': ["哈囉，我是課程前導機器人，這邊我可以跟你介紹如何進行一個好的提問，有什麼想問我嗎" ],
-        'continuer': "請以核能發電為主題提出問題，我會根據你的問題來給出評語"
+        'toAgent': ["哈囉，我是論證活動前導機器人，這邊我可以跟你介紹如何進行一個好的提問，有什麼想問我嗎" ],
+        'continuer': "請以核能發電為主題提出問題，我會根據你的問題來給出評語。 如果覺得已經練習足夠，請說`繼續`。"
     }
 })
 
 stage_try_reply = Stage({
-"system": {},
+"system": "practice",
     "situation": {
-        'role': "Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. If uncertain or lacking confidence in the answer, it's acceptable to respectfully decline rather than provide inaccurate information. ",
-        'task': "你需要協助使用者了解如何進行一個好的回應，和好的回應能帶來的優勢劣勢。此外你並沒有其他的身分。"
+    'role': """
+        Please provide an informative response to the user's question in a manner akin to that of a knowledgeable teacher. 
+        If uncertain or lacking confidence in the answer,it's acceptable to respectfully decline rather than provide inaccurate information. 
+        """,
+        'task': "你需要協助使用者了解如何進行一個好的回應，和好的回應能帶來的優勢劣勢。之後使用者將會持續練習回應問題，你必須根據回應方式段好壞並給出原因。此外你並沒有其他的身分。"
     },
     "target": {
         'rag': [
@@ -148,8 +167,8 @@ stage_try_reply = Stage({
         ],
     },
     "action": {
-        'opener': "您好，這邊想說一些關於如何進行一個好的回應。\n 好的回應需要細心聆聽，理解對方意見後以尊重和同理心回應。透過清晰表達想法、提供有建設性的意見或解決方案，能促進溝通、建立良好關係。良好回應能激發信任感、增進合作與團隊凝聚力，提升解決問題的效率。此外，善於回應也能展現個人的成熟度與專業形象，為自己贏得更多的尊重和信任。\n 這邊我們提供一個嘗試回應的機會，請嘗試回應『核能發電是否是對環境的破壞和毀滅？』，我會根據你的問題來給出評語",
-        'toAgent': ["哈囉，我是課程前導機器人，這邊我可以跟你介紹如何進行一個好的回應，有什麼想問我嗎" ],
-        'continuer': "請嘗試回應『核能發電是否是對環境的破壞和毀滅？』，我會根據你的問題來給出評語?"
+        'opener': "您好，這邊想說一些關於如何進行一個好的回應。\n 好的回應需要細心聆聽，理解對方意見後以尊重和同理心回應。透過清晰表達想法、提供有建設性的意見或解決方案，能促進溝通、建立良好關係。良好回應能激發信任感、增進合作與團隊凝聚力，提升解決問題的效率。此外，善於回應也能展現個人的成熟度與專業形象，為自己贏得更多的尊重和信任。\n 這邊我們提供一個嘗試回應的機會，請嘗試回應『核能發電是否會對環境的破壞和毀滅？』，我會根據你的問題來給出評語",
+        'toAgent': ["哈囉，我是論證活動前導機器人，這邊我可以跟你介紹如何進行一個好的回應，有什麼想問我嗎" ],
+        'continuer': "請嘗試回應『核能發電是否會對環境的破壞和毀滅？』，我會根據你的問題來給出評語? 如果覺得已經練習足夠，請說`繼續`。"
     }
 })
