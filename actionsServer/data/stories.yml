@@ -6,10 +6,8 @@ stories:
   steps:
     - intent: faq
     - action: action_ActionAskGpt
-    - action: utter_ask_next_step
 
 - story: intro_bot_02
   steps:
     - intent: confirm
     - action: action_ActionGoNext
-    - action: utter_ask_next_step
