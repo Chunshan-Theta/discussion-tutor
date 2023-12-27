@@ -95,26 +95,32 @@ class ActionGoNext(Action):
         if userStatus['stage'] == "intro_bot":
             dispatcher.utter_message("***intro_bot -> intro_unclear_power")
             dispatcher.utter_message(stage_intro_unclear_power.action["opener"])
+            dispatcher.utter_message(stage_intro_unclear_power.action["continuer"])
+            
             userStatus['stage'] = "intro_unclear_power"
 
         elif userStatus['stage'] == "intro_unclear_power":
             dispatcher.utter_message("***intro_unclear_power -> intro_discussion")
             dispatcher.utter_message(stage_intro_discussion.action["opener"])
+            dispatcher.utter_message(stage_intro_discussion.action["continuer"])
             userStatus['stage'] = "intro_discussion"
             
 
         elif userStatus['stage'] == "intro_discussion":
             dispatcher.utter_message("***intro_discussion -> intro_ask")
             dispatcher.utter_message(stage_try_ask.action["opener"])
+            dispatcher.utter_message(stage_try_ask.action["continuer"])
             userStatus['stage'] = "intro_ask"
 
         elif userStatus['stage'] == "intro_ask":
             dispatcher.utter_message("***intro_ask -> intro_reply")
             dispatcher.utter_message(stage_try_reply.action["opener"])
+            dispatcher.utter_message(stage_try_reply.action["continuer"])
             userStatus['stage'] = "intro_reply"
 
         elif userStatus['stage'] == "intro_reply":
             dispatcher.utter_message("***intro_reply -> finish")
+            dispatcher.utter_message("活動結束")
             userStatus['stage'] = "finish"
 
         elif userStatus['stage'] == "finish":
