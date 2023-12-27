@@ -1,59 +1,16 @@
-version: "3.1"
-
-intents:
-  - faq
-  - other
-
+version: '3.1'
 responses:
-  utter_introduct_the_bot_game:
-  - text: "準備開始遊戲"
-  utter_will_finish_story:
-  - text: "遊戲將要結束 進行分析"
-  
-  
-
-
-
+  utter_ask_next_step:
+  - text: '請回答您的想法，或如果想到下一個階段, 請說`繼續`. '
 
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
-
 actions:
-  - utter_introduct_the_bot_game
-  - utter_story_start
-  - utter_will_finish_story
-  - action_solt_welcome_stage_set_false
-  - action_solt_story_stage_set_started
-  - action_solt_story_stage_set_finished
-  - action_ask_gpt_analysis_story
-  - action_ask_gpt_extend_story
-  - action_story_start
+- action_ActionAskGpt
+- action_ActionGoNext
 
+intents:
+- confirm
+- faq
 
-slots:
-  story_started:
-    type: bool
-    influence_conversation: true
-    initial_value: false
-    mappings:
-      - type: custom
-  story_finished:
-    type: bool
-    influence_conversation: true
-    initial_value: false
-    mappings:
-      - type: custom
-  welcome_stage:
-    type: bool
-    influence_conversation: true
-    initial_value: true
-    mappings:
-      - type: custom
-
-  # questionsfeHistory:
-  #   type: list
-  #   influence_conversation: true
-  #   initial_value: null
-  #   mappings:
-  #     - type: custom

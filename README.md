@@ -7,19 +7,21 @@ We design ideas from ChatDev and try to build a step-by-step framework.
 # Design
 
 ```
+actions:
+- action_ActionAskGpt
+- action_ActionGoNext
 
-
+intents:
+- confirm
+- faq
 
 ```
+
 ### UI Demo
 
-![img](./doc/chatroom_01.png)
+![img](./doc/demo.png)
 
 
-### Game Demo
-
-```
-```
 
 # Service
 
@@ -49,4 +51,14 @@ curl -o output.txt -X POST -H "Content-Type: application/json; charset=UTF-8" -d
 docker-compose up test-model
 ```
 
+- interactive
+```
 
+docker-compose up rasa-actionServer
+
+```
+
+- Testing In docker Container
+```
+docker run -it -v ./actionsServer:/app --entrypoint=/bin/bash rasa/rasa:3.6.6-full
+```

@@ -11,10 +11,11 @@ from typing import Any, Text, Dict, List
 from rasa_sdk.events import SlotSet
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from .models import callGPT_AnalyzeStory, decodeAnalyzeStory, callGPTStoryExtend
+from .models import *
 import json
 import os
 from .document import *
+from .stages import *
 
 def send(d: CollectingDispatcher, obj: Any): d.utter_message(str(obj))
 def getSlot_StoryStage(t: Tracker): return t.get_slot('story_stage')
@@ -27,40 +28,106 @@ assert(checkClient(client))
 
 
 
-class ActionAskGptExtendStory(Action):
+class ActionAskGpt(Action):
     def name(self) -> Text:
-        return "action_ask_gpt_extend_story"
+        return "action_ActionAskGpt"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        userText: str = "我選擇是:"+getUserText(tracker)
-        botReply: str = callGPTStoryExtend(getUserId(tracker), userText)
-        for m in botReply.split("\n"):
-            dispatcher.utter_message(text=str(m))
 
-        if "GAMEOVER" in botReply or "遊戲結束" in botReply:
+        userStatus = getByKey(client,getUserId(tracker))
+        if userStatus is None:
+            userStatus = {}
+        if "stage" not in userStatus:
+            userStatus['stage'] = "intro_bot"
+            # dispatcher.utter_message("***ActionAskGpt")
+            dispatcher.utter_message(stage_intro_bot.action["opener"])
 
-            dispatcher.utter_message(text="遊戲將要結束 進行分析 沒問題請說繼續")
-            return [
-                SlotSet("story_started", False),
-                SlotSet("story_finished", True)
-            ]
+        ##
+        if userStatus['stage'] == "intro_bot":
+            # dispatcher.utter_message("***intro_bot")
+            pass
+        elif userStatus['stage'] == "intro_unclear_power":
+            # dispatcher.utter_message("***intro_unclear_power")
+            pass
+        elif userStatus['stage'] == "intro_discussion":
+            # dispatcher.utter_message("***intro_discussion")
+            pass
+
+        elif userStatus['stage'] == "intro_ask":
+            # dispatcher.utter_message("***intro_ask")
+            pass
+
+        elif userStatus['stage'] == "intro_reply":
+            # dispatcher.utter_message("***intro_reply")
+            pass
+
+        elif userStatus['stage'] == "finish":
+            # dispatcher.utter_message("***finish")
+            return []
         else:
+            dispatcher.utter_message("[500] Action Stage Error")
             return []
 
+            
+        for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
+            dispatcher.utter_message(line)       
+        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
+        return []
 
-class ActionAskGptAnalysisStory(Action):
 
+class ActionGoNext(Action):
     def name(self) -> Text:
-        return "action_ask_gpt_analysis_story"
+        return "action_ActionGoNext"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        keymap = {}
-        userText: str = getUserText(tracker)
-        for reply in decodeAnalyzeStory(callGPT_AnalyzeStory(getUserId(tracker))):
-            dispatcher.utter_message(text=reply) 
+
+        userStatus = getByKey(client,getUserId(tracker))
+        if userStatus is None:
+            userStatus = {}
+        if "stage" not in userStatus:
+            userStatus['stage'] = "intro_bot"
+
+        ##
+        if userStatus['stage'] == "intro_bot":
+            dispatcher.utter_message("***intro_bot -> intro_unclear_power")
+            dispatcher.utter_message(stage_intro_unclear_power.action["opener"])
+            dispatcher.utter_message(stage_intro_unclear_power.action["continuer"])
             
-        return []
+            userStatus['stage'] = "intro_unclear_power"
+
+        elif userStatus['stage'] == "intro_unclear_power":
+            dispatcher.utter_message("***intro_unclear_power -> intro_discussion")
+            dispatcher.utter_message(stage_intro_discussion.action["opener"])
+            dispatcher.utter_message(stage_intro_discussion.action["continuer"])
+            userStatus['stage'] = "intro_discussion"
+            
+
+        elif userStatus['stage'] == "intro_discussion":
+            dispatcher.utter_message("***intro_discussion -> intro_ask")
+            dispatcher.utter_message(stage_try_ask.action["opener"])
+            dispatcher.utter_message(stage_try_ask.action["continuer"])
+            userStatus['stage'] = "intro_ask"
+
+        elif userStatus['stage'] == "intro_ask":
+            dispatcher.utter_message("***intro_ask -> intro_reply")
+            dispatcher.utter_message(stage_try_reply.action["opener"])
+            dispatcher.utter_message(stage_try_reply.action["continuer"])
+            userStatus['stage'] = "intro_reply"
+
+        elif userStatus['stage'] == "intro_reply":
+            dispatcher.utter_message("***intro_reply -> finish")
+            dispatcher.utter_message("活動結束")
+            userStatus['stage'] = "finish"
+
+        elif userStatus['stage'] == "finish":
+            dispatcher.utter_message("***Hi It's bot! finish")
+
+        else:
+            dispatcher.utter_message("[500] Action Stage Error")
+
+        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
+        return []    
