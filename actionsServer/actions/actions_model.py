@@ -16,12 +16,21 @@ import json
 import os
 from .document import *
 from .stages import *
+import base64
 
+def decrypt(decoded_text):
+    SecretKey = "20240116";
+    decoded_text = base64.b64decode(decoded_text).decode('utf-8')
+    result = ''
+    for i in range(len(decoded_text)):
+        charCode = ord(decoded_text[i]) ^ ord(SecretKey[i % len(SecretKey)])
+        result += chr(charCode)
+    return result
 def send(d: CollectingDispatcher, obj: Any): d.utter_message(str(obj))
 def getSlot_StoryStage(t: Tracker): return t.get_slot('story_stage')
 def getUserLatestMEG(t: Tracker): return t.latest_message
 def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
-def getUserId(t: Tracker): return t.sender_id
+def getUserId(t: Tracker): return decrypt(t.sender_id)
 client = createClient()
 assert(checkClient(client))
 
@@ -35,6 +44,8 @@ class ActionAskGpt(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        dispatcher.utter_message("getUserId: "+getUserId(tracker))
 
         userStatus = getByKey(client,getUserId(tracker))
         if userStatus is None:
