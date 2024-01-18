@@ -34,6 +34,29 @@ def getUserId(t: Tracker): return decrypt(t.sender_id)
 client = createClient()
 assert(checkClient(client))
 
+def goNext(userId: str) -> List[Dict[Text, Any]]:
+    reply: List[str] = []
+    userStatus = getByKey(client,userId)
+    if userStatus is None:
+        userStatus = {}
+    if "stage" not in userStatus:
+        userStatus['stage'] = "intro_bot"
+
+    ##
+    if userStatus['stage'] == "intro_bot":
+        reply.append("***intro_bot -> stage_discussion_tutor")
+        stage = stage_discussion_tutor
+        userStatus['stage'] = "stage_discussion_tutor"
+
+    else:
+        reply.append("[500] Action Stage Error")
+
+    reply.append(stage.action["opener"])
+    if "continuer" in stage.action:
+        reply.append(stage.action["continuer"])
+
+    updateDocuments(client, [{"key":userId, "value": userStatus}])
+    return []    
 
 
 
@@ -62,30 +85,5 @@ class ActionAskGpt(Action):
         return []
 
 
-class ActionGoNext(Action):
-    def name(self) -> Text:
-        return "action_ActionGoNext"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        userStatus = getByKey(client,getUserId(tracker))
-        if userStatus is None:
-            userStatus = {}
-        if "stage" not in userStatus:
-            userStatus['stage'] = "intro_bot"
-
-        ##
-        if userStatus['stage'] == "intro_bot":
-            dispatcher.utter_message("***intro_bot -> stage_discussion_tutor")
-            stage = stage_discussion_tutor
-            userStatus['stage'] = "stage_discussion_tutor"
-
-        else:
-            dispatcher.utter_message("[500] Action Stage Error")
-
-        dispatcher.utter_message(stage.action["opener"])
-        dispatcher.utter_message(stage.action["continuer"])
-        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
-        return []    
