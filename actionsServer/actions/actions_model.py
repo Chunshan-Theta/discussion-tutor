@@ -34,13 +34,9 @@ def getUserId(t: Tracker): return decrypt(t.sender_id)
 client = createClient()
 assert(checkClient(client))
 
-def goNext(userId: str) -> List[Dict[Text, Any]]:
+def goNext(userId: str) -> List[str]:
     reply: List[str] = []
     userStatus = getByKey(client,userId)
-    if userStatus is None:
-        userStatus = {}
-    if "stage" not in userStatus:
-        userStatus['stage'] = "intro_bot"
 
     ##
     if userStatus['stage'] == "intro_bot":
@@ -56,7 +52,7 @@ def goNext(userId: str) -> List[Dict[Text, Any]]:
         reply.append(stage.action["continuer"])
 
     updateDocuments(client, [{"key":userId, "value": userStatus}])
-    return []    
+    return reply   
 
 
 
@@ -74,9 +70,8 @@ class ActionAskGpt(Action):
             userStatus = {}
             
         if "stage" not in userStatus:
-            userStatus['stage'] = "intro_bot"
+            userStatus['stage'] = "stage_discussion_tutor"
             # dispatcher.utter_message("***ActionAskGpt")
-            dispatcher.utter_message(stage_intro_bot.action["opener"])
 
         ##            
         for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):

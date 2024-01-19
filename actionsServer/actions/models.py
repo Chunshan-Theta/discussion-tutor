@@ -61,9 +61,8 @@ def updateBotReplyContinuer(stage: Stage, sourceBotReply: str):
     return sourceBotReply if "continuer" not in stage.action else sourceBotReply+"\n"+stage.action["continuer"]
 
 def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
-    
+    REDISLABEL = userId+"-convHistory"
     stage = getStage(Stype)
-
     botReply: str = ""
     systemPrompt = genSystemPrompt(stage)
     
@@ -74,9 +73,11 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
         "content": systemPrompt
     }]
 
-    ## TODO: Get history from DB
-    ## TODO: update history to system msg.
-    ## prompts[0]['content']+= ...
+    ## Get history from DB
+    convHistory = getByKey(client, REDISLABEL)
+    convHistory = convHistory if convHistory is not None else "\n"
+    ## update history to system msg.
+    prompts[0]['content']+= convHistory
 
 
     ## Update user question
@@ -84,11 +85,14 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
                     "role": "user",
                     "content": userText
                 })
-    # botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
-    botReply += "\n"+callGpt(prompts, 0.7)
+    convHistory+="\nuser: "+userText
 
-    ## TODO: Update history to DB
-    # updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
+    ##
+    botReply += "\n"+callGpt(prompts, 0.7)
+    convHistory+="\nassistant: "+botReply
+
+    ## Update history to DB
+    updateDocuments(client, [{"key":REDISLABEL, "value": convHistory+"\n"}])
 
     botReply = updateBotReplyContinuer(stage, botReply)
     return botReply       

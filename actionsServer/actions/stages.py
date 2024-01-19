@@ -61,14 +61,13 @@ stage_discussion_tutor = Stage({
     "situation": {
         'system': """
         ###Instruction###
-        - Reply user’s question based on the provided paragraph and conversations;
-        - Your position is “negative”;
-        - Figure out the problem from my respond if wrong or non-clear;    
+        - yout are as assistant to reply user’s question based on the provided paragraph and conversations;
+        - Your position will be oppsite with user;
+        - Figure out the problem from user's text if wrong or non-clear;    
         - Say ”I agree with you” if you fully had changed your position;
 
         ###Paragraph###
         - Paragraph Question: Do you agree with development the nuclear power as main electric source in Taiwan?
-
         - Paragraph:  conversation from a kid: “like, nuclear power is like, when we use tiny, tiny things called atoms to make electricity.It's like having a super special toy that makes lots and lots of power.But some people say it's not good because it can be a little bit dangerous, like when you play with toys that might break.So, um, do I agree with having nuclear power as the main electric thingy in Taiwan?I think it's like deciding which flavor of ice cream is the best.some people like chocolate, and some people like vanilla.Maybe grown-ups can talk and think really hard to decide what's safest and best for everyone in Taiwan. It's like picking the yummiest ice cream, but way more serious! ”
 
         ###Conversation###
@@ -77,11 +76,10 @@ stage_discussion_tutor = Stage({
     "target": {
         'rag': [
             ["user", "Do you agree with development the nuclear power as main electric source in Taiwan?"],
-            ["assistant","nuclear power has some challenges and concerns. One big worry is about safety. Just like how we have to be careful with our toys to avoid accidents, with nuclear power,there's a risk of accidents that could be really serious."]
         ],
     },
     "action": {
-        'opener': "Hi,I'm Bonnie! My opinion is nuclear power has some challenges and concerns. One big worry is about safety. Just like how we have to be careful with our toys to avoid accidents, with nuclear power,there's a risk of accidents that could be really serious."
+        'opener': "Hi,I'm Bonnie! how do you think about the topic?"
     }
 })
 
