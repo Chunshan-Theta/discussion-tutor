@@ -36,7 +36,8 @@ assert(checkClient(client))
 
 def goNext(userId: str) -> List[str]:
     reply: List[str] = []
-    userStatus = getByKey(client,userId)
+    REDISLABELSTATUS = userId
+    userStatus = getByKey(client,REDISLABELSTATUS)
 
     ##
     if userStatus['stage'] == "intro_bot":
@@ -51,7 +52,7 @@ def goNext(userId: str) -> List[str]:
     if "continuer" in stage.action:
         reply.append(stage.action["continuer"])
 
-    updateDocuments(client, [{"key":userId, "value": userStatus}])
+    updateDocuments(client, [{"key":REDISLABELSTATUS, "value": userStatus}])
     return reply   
 
 
@@ -63,11 +64,15 @@ class ActionAskGpt(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
+        REDISLABELSTATUS = getUserId(tracker)
+        REDISLABELCOUNT = getUserId(tracker)+"-ROUNDCOUNT"
         dispatcher.utter_message("getUserId: "+getUserId(tracker))
-        userStatus = getByKey(client,getUserId(tracker))
-        if userStatus is None:
-            userStatus = {}
+        
+        userStatus = getByKey(client, REDISLABELSTATUS)
+        userStatus = userStatus if userStatus is NOT None else {}
+        
+        roundCount = getByKey(client, REDISLABELCOUNT)
+        roundCount = roundCount if roundCount is not None else 0
             
         if "stage" not in userStatus:
             userStatus['stage'] = "stage_discussion_tutor"
@@ -76,7 +81,16 @@ class ActionAskGpt(Action):
         ##            
         for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
             dispatcher.utter_message(line)
-        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
+
+        if roundCount > 3:
+            if userStatus['stage'] = "stage_discussion_tutor":
+                replies = goNext(getUserId(tracker))
+                for r in replies:
+                    dispatcher.utter_message(r)
+        ##
+        updateDocuments(client, [{"key":REDISLABELSTATUS, "value": userStatus}])
+        updateDocuments(client, [{"key":REDISLABELCOUNT, "value": roundCount}])
+
         return []
 
 
