@@ -2,15 +2,18 @@ version: '3.1'
 responses:
   utter_non_support:
   - text: '[400] not support your request'
+  utter_hi:
+  - text: 'hello!'
 
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
+
 actions:
 - action_ActionAskGpt
-- action_ActionGoNext
 
 intents:
 - confirm
-- faq
+- non_support
+- hi
 
