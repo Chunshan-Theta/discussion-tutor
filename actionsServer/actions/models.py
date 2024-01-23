@@ -63,10 +63,17 @@ def updateBotReplyContinuer(stage: Stage, sourceBotReply: str):
 def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
     REDISLABEL = userId+"-convHistory"
     stage = getStage(Stype)
+    if stage.system == "rag/Instruction":
+        return callGPTByStage_discussion(REDISLABEL, stage, userText)
+    if stage.system == "rag/Instruction+history":
+        return callGPTByStage_history(REDISLABEL, stage, userText)
+    return ["[500] NON SUPPORT"]
+
+
+def callGPTByStage_discussion(redisLabel: str, stage: STAGE, userText: str) -> str:
+
     botReply: str = ""
     systemPrompt = genSystemPrompt(stage)
-    
-    
     ## Update System msg.
     prompts = [{
         "role": "system",
@@ -74,7 +81,7 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
     }]
 
     ## Get history from DB
-    convHistory = getByKey(client, REDISLABEL)
+    convHistory = getByKey(client, redisLabel)
     convHistory = convHistory if convHistory is not None else "\n"
     ## update history to system msg.
     prompts[0]['content']+= convHistory
@@ -96,5 +103,40 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
 
     botReply = updateBotReplyContinuer(stage, botReply)
     return botReply       
+
+
+def callGPTByStage_history(redisLabel: str, stage: STAGE, userText: str) -> str:
+
+    botReply: str = ""
+    systemPrompt = genSystemPrompt(stage)
+    ## Update System msg.
+    prompts = [{
+        "role": "system",
+        "content": systemPrompt
+    }]
+
+    ## Get history from DB
+    convHistory = getByKey(client, redisLabel)
+    if convHistory is None:
+        return updateBotReplyContinuer(stage, "[500] USER'HISTORY IS MISSING.")
+    prompts[0]["content"]+= convHistory
+
+
+    ## Update user question
+    # prompts.append({
+    #                 "role": "user",
+    #                 "content": userText
+    #             })
+    # convHistory+="\nuser: "+userText
+
+    ##
+    botReply = callGpt(prompts, 0.7)
+    # botReply += "\n"+callGpt(prompts, 0.7)
+    # convHistory+="\nassistant: "+botReply
+
+    ## Update history to DB
+    # updateDocuments(client, [{"key":REDISLABEL, "value": convHistory+"\n"}])
+
+    return updateBotReplyContinuer(stage, botReply)       
 
 

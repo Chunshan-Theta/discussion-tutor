@@ -27,34 +27,6 @@ class StageLabel:
 
 
        
-stage_intro_bot = Stage({
-    "system": "rag/common",
-    "situation": {
-        'role': """
-            
-            """,
-		'task': "你身為前導機器人會提供使用者來問答。此外你並沒有其他的身分。",
-    },
-    "target": {
-        
-        'rag': [
-            ["Hi", "哈囉，我是論證活動前導機器人，可以幫助學生透過問答來了解更多知識"],
-            ["你是誰","我是一個由人工智慧技術建構的語言模製的論證活動前導機器人，可以幫助學生來了解論證活動。\n沒有問題的話，接下去會開始引導流程。"],
-            ["這是什麼活動","這是一個論證活動，主題是台灣適不適合發展核能發電。"],
-            ["怎樣才能參加這個活動","這是一個不定時的論證活動，詳情請洽中央網學所 吳研究室。"],
-
-        ],
-    },
-    "action": {
-        'toAgent': ["我是論證活動前導機器人，可以幫助學生透過問答來了解更多知識，有什麼想問我嗎" ],
-        'continuer': "有關於我的任何問題嗎？ 如果沒有請說繼續",
-        'opener': """
-        Hi,您好。歡迎使用論證活動前導機器人，我是一個由人工智慧技術建構的論證活動前導機器人，
-        目標是提供學生在進行論證前掌握一些基本的論證與核能發電的知識。
-        同時也可以回應該活動的一些基本資訊。
-        """
-    }
-})
 
 stage_discussion_tutor = Stage({
     "system": "rag/Instruction",
@@ -84,23 +56,30 @@ stage_discussion_tutor = Stage({
 })
 
 stage_rubric_tutor = Stage({
-    "system": "rag/Instruction",
+    "system": "rag/Instruction+history",
     "situation": {
         'system': """
-        As middle school tutor to give tips for user to improve their sentence. those tips need base on those rubric:
+        As middle school tutor to give tips for user to improve their Conversation, those tips need base on those rubric.
+
+        ###Rubric###
         1. Clear Claim with Reasons: Claim is unclear/No clear reasons are given/Claim is clear, but the reasons are unclear, absent, or incomplete. Claim and reasons are clearly stated/Claim is clearly stated and the reasons are strong. 
         2. Evidence: Central claim is not supported. No evidence provided. /Attempts to support the central claim and reasons with facts, but information is unclear, inaccurate, or lacks citations./Supports the central claim and reasons with facts. necessary details, and citations. /Supports the central claim and reasons with strong facts, thorough details, and accurate citations.
         3. Explanation: Contains little to no explanation or analysis of the information presented. /Attempts to explain and analyze the information, but the explanation is unclear or inaccurate. / Clearly explains and analyzes most of the information presented. / Clearly, concisely, and thoroughly explains and analyzes the information presented. 
+        
+        ###Conversation###
         """
+    },
+    "action": {
+        'opener': "Thank you for using. now we had a good conversation. and then I have some advise for you ...."
     }
 })
 
 
 def getStage(StageType: str) -> Stage:
 
-    if StageType == "intro_bot":
-        return stage_intro_bot
     if StageType == "stage_discussion_tutor":
         return stage_discussion_tutor
+    if StageType == "stage_rubric_tutor":
+        return stage_rubric_tutor
 
     raise RuntimeError("Non-defined Stage")

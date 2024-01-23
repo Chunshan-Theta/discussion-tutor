@@ -40,10 +40,10 @@ def goNext(userId: str) -> List[str]:
     userStatus = getByKey(client,REDISLABELSTATUS)
 
     ##
-    if userStatus['stage'] == "intro_bot":
-        reply.append("***intro_bot -> stage_discussion_tutor")
-        stage = stage_discussion_tutor
-        userStatus['stage'] = "stage_discussion_tutor"
+    if userStatus['stage'] == "stage_discussion_tutor":
+        reply.append("***stage_discussion_tutor -> stage_rubric_tutor")
+        stage = stage_rubric_tutor
+        userStatus['stage'] = "stage_rubric_tutor"
 
     else:
         reply.append("[500] Action Stage Error")
@@ -74,11 +74,13 @@ class ActionAskGpt(Action):
         roundCount = getByKey(client, REDISLABELCOUNT)
         roundCount = roundCount if roundCount is not None else 0
             
+        # the first round
         if "stage" not in userStatus:
             userStatus['stage'] = "stage_discussion_tutor"
             # dispatcher.utter_message("***ActionAskGpt")
 
-        ##            
+        ##
+        ## TODO: DONT DO AGAING ANALYSIS            
         for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
             dispatcher.utter_message(line)
 
@@ -87,9 +89,11 @@ class ActionAskGpt(Action):
                 replies = goNext(getUserId(tracker))
                 for r in replies:
                     dispatcher.utter_message(r)
+                    
+                    
         ##
         updateDocuments(client, [{"key":REDISLABELSTATUS, "value": userStatus}])
-        updateDocuments(client, [{"key":REDISLABELCOUNT, "value": roundCount}])
+        updateDocuments(client, [{"key":REDISLABELCOUNT, "value": roundCount+1}])
 
         return []
 
