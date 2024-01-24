@@ -54,8 +54,9 @@ def genSystemPrompt(stage: Stage):
             systemPrompt += unit[0]+":"+unit[1]
             systemPrompt += "\n"
         return systemPrompt
-    
-    raise RuntimeError("Non-defined SystemPrompt")
+    if stage.system == "rag/Instruction+history":
+        return stage.situation['system']+"\n"
+    raise RuntimeError("Non-defined SystemPrompt:"+stage.system)
 
 def updateBotReplyContinuer(stage: Stage, sourceBotReply: str):
     return sourceBotReply if "continuer" not in stage.action else sourceBotReply+"\n"+stage.action["continuer"]
@@ -70,7 +71,7 @@ def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
     return ["[500] NON SUPPORT"]
 
 
-def callGPTByStage_discussion(redisLabel: str, stage: STAGE, userText: str) -> str:
+def callGPTByStage_discussion(redisLabel: str, stage: Stage, userText: str) -> str:
 
     botReply: str = ""
     systemPrompt = genSystemPrompt(stage)
@@ -99,13 +100,13 @@ def callGPTByStage_discussion(redisLabel: str, stage: STAGE, userText: str) -> s
     convHistory+="\nassistant: "+botReply
 
     ## Update history to DB
-    updateDocuments(client, [{"key":REDISLABEL, "value": convHistory+"\n"}])
+    updateDocuments(client, [{"key":redisLabel, "value": convHistory+"\n"}])
 
     botReply = updateBotReplyContinuer(stage, botReply)
     return botReply       
 
 
-def callGPTByStage_history(redisLabel: str, stage: STAGE, userText: str) -> str:
+def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
 
     botReply: str = ""
     systemPrompt = genSystemPrompt(stage)

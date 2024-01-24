@@ -34,10 +34,9 @@ def getUserId(t: Tracker): return decrypt(t.sender_id)
 client = createClient()
 assert(checkClient(client))
 
-def goNext(userId: str) -> List[str]:
+def goNext(userId: str, redisLabel_status:str) -> List[str]:
     reply: List[str] = []
-    REDISLABELSTATUS = userId
-    userStatus = getByKey(client,REDISLABELSTATUS)
+    userStatus = getByKey(client,redisLabel_status)
 
     ##
     if userStatus['stage'] == "stage_discussion_tutor":
@@ -52,7 +51,7 @@ def goNext(userId: str) -> List[str]:
     if "continuer" in stage.action:
         reply.append(stage.action["continuer"])
 
-    updateDocuments(client, [{"key":REDISLABELSTATUS, "value": userStatus}])
+    updateDocuments(client, [{"key":redisLabel_status, "value": userStatus}])
     return reply   
 
 
@@ -69,7 +68,7 @@ class ActionAskGpt(Action):
         dispatcher.utter_message("getUserId: "+getUserId(tracker))
         
         userStatus = getByKey(client, REDISLABELSTATUS)
-        userStatus = userStatus if userStatus is NOT None else {}
+        userStatus = userStatus if userStatus is not None else {}
         
         roundCount = getByKey(client, REDISLABELCOUNT)
         roundCount = roundCount if roundCount is not None else 0
@@ -85,14 +84,13 @@ class ActionAskGpt(Action):
             dispatcher.utter_message(line)
 
         if roundCount > 3:
-            if userStatus['stage'] = "stage_discussion_tutor":
-                replies = goNext(getUserId(tracker))
+            if userStatus['stage'] == "stage_discussion_tutor":
+                replies = goNext(getUserId(tracker),REDISLABELSTATUS)
                 for r in replies:
                     dispatcher.utter_message(r)
                     
                     
         ##
-        updateDocuments(client, [{"key":REDISLABELSTATUS, "value": userStatus}])
         updateDocuments(client, [{"key":REDISLABELCOUNT, "value": roundCount+1}])
 
         return []

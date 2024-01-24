@@ -29,6 +29,11 @@ const App = () => {
       .catch(error => console.log(error))
   }, []);
 
+  if (messages.length==0){
+    const defaultMessage ={ id: messages.length + 1, text: "How do you think about this topic?", sender: 'Bot' , className_p: "message_bot_p" , className_span: "message_bot_span"}
+    setMessages(messages => [...messages, defaultMessage] );
+  }
+
 
 
   const sendMessage = message => {

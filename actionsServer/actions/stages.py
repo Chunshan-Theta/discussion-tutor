@@ -59,7 +59,8 @@ stage_rubric_tutor = Stage({
     "system": "rag/Instruction+history",
     "situation": {
         'system': """
-        As middle school tutor to give tips for user to improve their Conversation, those tips need base on those rubric.
+        As university school tutor to give tips for user to improve their Conversation, those tips need base on those rubric.
+        ONLY give tips, Don't tell user about rubrics.
 
         ###Rubric###
         1. Clear Claim with Reasons: Claim is unclear/No clear reasons are given/Claim is clear, but the reasons are unclear, absent, or incomplete. Claim and reasons are clearly stated/Claim is clearly stated and the reasons are strong. 
@@ -70,7 +71,7 @@ stage_rubric_tutor = Stage({
         """
     },
     "action": {
-        'opener': "Thank you for using. now we had a good conversation. and then I have some advise for you ...."
+        'opener': "Thank you for using. now we had a good conversation. and then I have some advise for you ....\n say ok if you want to know."
     }
 })
 
@@ -82,4 +83,4 @@ def getStage(StageType: str) -> Stage:
     if StageType == "stage_rubric_tutor":
         return stage_rubric_tutor
 
-    raise RuntimeError("Non-defined Stage")
+    raise RuntimeError("Non-defined Stage:"+StageType)
