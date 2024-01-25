@@ -54,7 +54,7 @@ const App = () => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-            message: message.replaceAll(' ',''),
+            message: message,
             sender: userId,
         }),
     })

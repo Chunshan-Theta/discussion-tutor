@@ -108,36 +108,41 @@ def callGPTByStage_discussion(redisLabel: str, stage: Stage, userText: str) -> s
 
 def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
 
-    botReply: str = ""
-    systemPrompt = genSystemPrompt(stage)
-    ## Update System msg.
-    prompts = [{
-        "role": "system",
-        "content": systemPrompt
-    }]
+    TIPSLABEL = redisLabel+"-tislabel"
+    tips = getByKey(client, TIPSLABEL)
+    if tips is None:
+        botReply: str = "\n"
+        systemPrompt = genSystemPrompt(stage)
+        ## Update System msg.
+        prompts = [{
+            "role": "system",
+            "content": systemPrompt
+        }]
 
-    ## Get history from DB
-    convHistory = getByKey(client, redisLabel)
-    if convHistory is None:
-        return updateBotReplyContinuer(stage, "[500] USER'HISTORY IS MISSING.")
-    prompts[0]["content"]+= convHistory
+        ## Get history from DB
+        convHistory = getByKey(client, redisLabel)
+        if convHistory is None:
+            return updateBotReplyContinuer(stage, "[500] USER'HISTORY IS MISSING.")
+        prompts[0]["content"]+= convHistory
 
 
-    ## Update user question
-    # prompts.append({
-    #                 "role": "user",
-    #                 "content": userText
-    #             })
-    # convHistory+="\nuser: "+userText
+        ## Update user question
+        # prompts.append({
+        #                 "role": "user",
+        #                 "content": userText
+        #             })
+        # convHistory+="\nuser: "+userText
 
-    ##
-    botReply = callGpt(prompts, 0.7)
-    # botReply += "\n"+callGpt(prompts, 0.7)
-    # convHistory+="\nassistant: "+botReply
+        ##
+        #botReply += "\n***prompts: "+str(prompts)+"\n"
+        botReply += callGpt(prompts, 0.7)
+        # botReply += "\n"+callGpt(prompts, 0.7)
+        # convHistory+="\nassistant: "+botReply
+    else:
+        botReply = tips
 
     ## Update history to DB
-    # updateDocuments(client, [{"key":REDISLABEL, "value": convHistory+"\n"}])
-
+    updateDocuments(client, [{"key":TIPSLABEL, "value": botReply}])
     return updateBotReplyContinuer(stage, botReply)       
 
 
