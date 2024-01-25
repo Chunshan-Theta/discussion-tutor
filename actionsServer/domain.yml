@@ -1,16 +1,19 @@
 version: '3.1'
 responses:
-  utter_ask_next_step:
-  - text: '請回答您的想法，或如果想到下一個階段, 請說`繼續`. '
+  utter_non_support:
+  - text: '[400] not support your request'
+  utter_hi:
+  - text: 'hello!'
 
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
+
 actions:
 - action_ActionAskGpt
-- action_ActionGoNext
 
 intents:
 - confirm
-- faq
+- non_support
+- hi
 

@@ -16,15 +16,46 @@ import json
 import os
 from .document import *
 from .stages import *
+import base64
 
+def decrypt(decoded_text):
+    SecretKey = "20240116";
+    decoded_text = base64.b64decode(decoded_text).decode('utf-8')
+    result = ''
+    for i in range(len(decoded_text)):
+        charCode = ord(decoded_text[i]) ^ ord(SecretKey[i % len(SecretKey)])
+        result += chr(charCode)
+    assert len(result.split("."))==4
+    return result
 def send(d: CollectingDispatcher, obj: Any): d.utter_message(str(obj))
 def getSlot_StoryStage(t: Tracker): return t.get_slot('story_stage')
 def getUserLatestMEG(t: Tracker): return t.latest_message
 def getUserText(t: Tracker): return getUserLatestMEG(t)["text"]
-def getUserId(t: Tracker): return t.sender_id
+def getUserId(t: Tracker): return decrypt(t.sender_id)
 client = createClient()
 assert(checkClient(client))
 
+def goNext(userStatus: Dict[str, Any],redisLabel_status) -> List[str]:
+    reply: List[str] = []
+    #reply.append("***goNext: userStatus -> "+ str(userStatus))
+
+
+    ##
+    if userStatus['stage'] == "stage_discussion_tutor":
+        #reply.append("***stage_discussion_tutor -> stage_rubric_tutor")
+        stage = stage_rubric_tutor
+        userStatus['stage'] = "stage_rubric_tutor"
+        updateDocuments(client, [{"key":redisLabel_status, "value": userStatus}])
+
+    else:
+        reply.append("[500] Action Stage Error")
+
+    reply.append(stage.action["opener"])
+    if "continuer" in stage.action:
+        reply.append(stage.action["continuer"])
+
+    
+    return reply   
 
 
 
@@ -35,99 +66,42 @@ class ActionAskGpt(Action):
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        REDISLABELSTATUS = getUserId(tracker)
+        REDISLABELCOUNT = getUserId(tracker)+"-ROUNDCOUNT"
+        
+        userStatus = getByKey(client, REDISLABELSTATUS)
+        userStatus = userStatus if userStatus is not None else {}
+        
+        roundCount = getByKey(client, REDISLABELCOUNT)
+        roundCount = roundCount if roundCount is not None else 1
 
-        userStatus = getByKey(client,getUserId(tracker))
-        if userStatus is None:
-            userStatus = {}
+        #dispatcher.utter_message("***ActionAskGpt: REDISLABELSTATUS: "+REDISLABELSTATUS)
+        #dispatcher.utter_message("***ActionAskGpt: REDISLABELCOUNT: "+REDISLABELCOUNT)
+            
+        # the first round
         if "stage" not in userStatus:
-            userStatus['stage'] = "intro_bot"
+            userStatus['stage'] = "stage_discussion_tutor"
             # dispatcher.utter_message("***ActionAskGpt")
-            dispatcher.utter_message(stage_intro_bot.action["opener"])
+        
 
         ##
-        if userStatus['stage'] == "intro_bot":
-            # dispatcher.utter_message("***intro_bot")
-            pass
-        elif userStatus['stage'] == "intro_unclear_power":
-            # dispatcher.utter_message("***intro_unclear_power")
-            pass
-        elif userStatus['stage'] == "intro_discussion":
-            # dispatcher.utter_message("***intro_discussion")
-            pass
-
-        elif userStatus['stage'] == "intro_ask":
-            # dispatcher.utter_message("***intro_ask")
-            pass
-
-        elif userStatus['stage'] == "intro_reply":
-            # dispatcher.utter_message("***intro_reply")
-            pass
-
-        elif userStatus['stage'] == "finish":
-            # dispatcher.utter_message("***finish")
-            return []
-        else:
-            dispatcher.utter_message("[500] Action Stage Error")
-            return []
-
-            
+        ## TODO: DONT DO AGAING ANALYSIS           
         for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
-            dispatcher.utter_message(line)       
-        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
+            dispatcher.utter_message(line)
+
+        #dispatcher.utter_message("***roundCount: "+str(roundCount))
+        if roundCount > 3:
+            if userStatus['stage'] == "stage_discussion_tutor":
+                replies = goNext(userStatus,REDISLABELSTATUS)
+                for r in replies:
+                    dispatcher.utter_message(r)
+                    
+                    
+        ##
+        updateDocuments(client, [{"key":REDISLABELCOUNT, "value": roundCount+1}])
+
         return []
 
 
-class ActionGoNext(Action):
-    def name(self) -> Text:
-        return "action_ActionGoNext"
 
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        userStatus = getByKey(client,getUserId(tracker))
-        if userStatus is None:
-            userStatus = {}
-        if "stage" not in userStatus:
-            userStatus['stage'] = "intro_bot"
-
-        ##
-        if userStatus['stage'] == "intro_bot":
-            dispatcher.utter_message("***intro_bot -> intro_unclear_power")
-            dispatcher.utter_message(stage_intro_unclear_power.action["opener"])
-            dispatcher.utter_message(stage_intro_unclear_power.action["continuer"])
-            
-            userStatus['stage'] = "intro_unclear_power"
-
-        elif userStatus['stage'] == "intro_unclear_power":
-            dispatcher.utter_message("***intro_unclear_power -> intro_discussion")
-            dispatcher.utter_message(stage_intro_discussion.action["opener"])
-            dispatcher.utter_message(stage_intro_discussion.action["continuer"])
-            userStatus['stage'] = "intro_discussion"
-            
-
-        elif userStatus['stage'] == "intro_discussion":
-            dispatcher.utter_message("***intro_discussion -> intro_ask")
-            dispatcher.utter_message(stage_try_ask.action["opener"])
-            dispatcher.utter_message(stage_try_ask.action["continuer"])
-            userStatus['stage'] = "intro_ask"
-
-        elif userStatus['stage'] == "intro_ask":
-            dispatcher.utter_message("***intro_ask -> intro_reply")
-            dispatcher.utter_message(stage_try_reply.action["opener"])
-            dispatcher.utter_message(stage_try_reply.action["continuer"])
-            userStatus['stage'] = "intro_reply"
-
-        elif userStatus['stage'] == "intro_reply":
-            dispatcher.utter_message("***intro_reply -> finish")
-            dispatcher.utter_message("活動結束")
-            userStatus['stage'] = "finish"
-
-        elif userStatus['stage'] == "finish":
-            dispatcher.utter_message("***Hi It's bot! finish")
-
-        else:
-            dispatcher.utter_message("[500] Action Stage Error")
-
-        updateDocuments(client, [{"key":getUserId(tracker), "value": userStatus}])
-        return []    

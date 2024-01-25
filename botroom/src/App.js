@@ -1,13 +1,41 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import ChatroomSidebar from './ChatroomSidebar';
 import Chatroom from './Chatroom';
 import ChatInput from './ChatInput';
 
+const SecretKey = "20240116";
+const encrypt = (content, secretKey) => {
+  let result = '';
+  for(let i = 0; i< content.length; i++){
+      let charCode = content.charCodeAt(i) ^ secretKey.charCodeAt(i % secretKey.length);
+      result += String.fromCharCode(charCode);
+  }
+  return btoa(result)
+}
+
+
+
 const App = () => {
-  const [userId, setUserId] = useState(Math.floor(Math.random() * 100000000)); // Example initial room ID
+  const [ipAddress, setIPAddress] = useState('')
+  // const [userId, setUserId] = useState(AES.encrypt(Math.floor(Math.random() * 100000000), AESKey).toString()); // Example initial room ID
+  const userId = encrypt(ipAddress, SecretKey);
   const [messages, setMessages] = useState([]); // Placeholder for messages
+  useEffect(() => {
+    fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => setIPAddress(data.ip))
+      .catch(error => console.log(error))
+  }, []);
+
+  if (messages.length==0){
+    const defaultMessage ={ id: messages.length + 1, text: "How do you think about this topic?", sender: 'Bot' , className_p: "message_bot_p" , className_span: "message_bot_span"}
+    setMessages(messages => [...messages, defaultMessage] );
+  }
+
+
+
   const sendMessage = message => {
 
     // Implement logic to send a message to the current room
@@ -20,13 +48,13 @@ const App = () => {
     setMessages(messages => [...messages, newMessage] );
 
     // Send POST request to Backend Service
-    fetch('https://literate-disco-97qv694x775f7xqv-5005.app.github.dev/webhooks/rest/webhook/', {
+    fetch('https://laughing-disco-4jg4q79649xc79gg-5005.app.github.dev/webhooks/rest/webhook/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-            message: message.replaceAll(' ',''),
+            message: message,
             sender: userId,
         }),
     })

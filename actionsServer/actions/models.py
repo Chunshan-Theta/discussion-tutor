@@ -39,71 +39,110 @@ assert(checkClient(client))
 
 
 
+
 #
-def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
-    
-    if Stype == "intro_bot":
-        stage = stage_intro_bot
-    elif Stype == "intro_unclear_power":
-        stage = stage_intro_unclear_power
-    elif Stype == "intro_discussion":
-        stage = stage_intro_discussion
-    elif Stype == "intro_ask":
-        stage = stage_try_ask
-
-    elif Stype == "intro_reply":
-        stage = stage_try_reply
-
-    else:
-        return "callGPTByStage Done."
-
-    botReply: str = ""
-    if stage.system == "reply/ans":
+def genSystemPrompt(stage: Stage):
+    if stage.system == "rag/common":
         systemPrompt = stage.situation["role"]+stage.situation["task"]+"\n\nplease Reply base on you know.\n you know:\n"
         for unit in stage.target['rag']:
             systemPrompt += "- "+unit[0]+"?"+unit[1]
             systemPrompt += "\n"
-        
+        return systemPrompt+"\n keep reply simply with english"
+    if stage.system == "rag/Instruction":
+        systemPrompt = stage.situation['system']+"\n"
+        for unit in stage.target['rag']:
+            systemPrompt += unit[0]+":"+unit[1]
+            systemPrompt += "\n"
+        return systemPrompt
+    if stage.system == "rag/Instruction+history":
+        return stage.situation['system']+"\n"
+    raise RuntimeError("Non-defined SystemPrompt:"+stage.system)
+
+def updateBotReplyContinuer(stage: Stage, sourceBotReply: str):
+    return sourceBotReply if "continuer" not in stage.action else sourceBotReply+"\n"+stage.action["continuer"]
+
+def callGPTByStage(userId: str, Stype: str, userText: str) -> str:
+    REDISLABEL = userId+"-convHistory"
+    stage = getStage(Stype)
+    if stage.system == "rag/Instruction":
+        return callGPTByStage_discussion(REDISLABEL, stage, userText)
+    if stage.system == "rag/Instruction+history":
+        return callGPTByStage_history(REDISLABEL, stage, userText)
+    return ["[500] NON SUPPORT"]
+
+
+def callGPTByStage_discussion(redisLabel: str, stage: Stage, userText: str) -> str:
+
+    botReply: str = ""
+    systemPrompt = genSystemPrompt(stage)
+    ## Update System msg.
+    prompts = [{
+        "role": "system",
+        "content": systemPrompt
+    }]
+
+    ## Get history from DB
+    convHistory = getByKey(client, redisLabel)
+    convHistory = convHistory if convHistory is not None else "\n"
+    ## update history to system msg.
+    prompts[0]['content']+= convHistory
+
+
+    ## Update user question
+    prompts.append({
+                    "role": "user",
+                    "content": userText
+                })
+    convHistory+="\nuser: "+userText
+
+    ##
+    botReply += "\n"+callGpt(prompts, 0.7)
+    convHistory+="\nassistant: "+botReply
+
+    ## Update history to DB
+    updateDocuments(client, [{"key":redisLabel, "value": convHistory+"\n"}])
+
+    botReply = updateBotReplyContinuer(stage, botReply)
+    return botReply       
+
+
+def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
+
+    TIPSLABEL = redisLabel+"-tislabel"
+    tips = getByKey(client, TIPSLABEL)
+    if tips is None:
+        botReply: str = "\n"
+        systemPrompt = genSystemPrompt(stage)
+        ## Update System msg.
         prompts = [{
             "role": "system",
-            "content": systemPrompt+"\n 請用中文;zh-tw回應;且回應的篇幅必須簡短"
+            "content": systemPrompt
         }]
-        prompts.append({
-                        "role": "user",
-                        "content": userText
-                    })
-        # botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
-        botReply += "\n"+callGpt(prompts, 0.3)
-    elif stage.system == "practice":
-        prompts = [{
-        "role": "system",
-        "content": stage.situation["role"]+stage.situation["task"]
-        }]
-        for unit in stage.target['rag']:
-            prompts.append({
-                        "role": "assistant",
-                        "content": "\n".join(stage.action["toAgent"])
-                    })
-            prompts.append({
-                        "role": "user",
-                        "content": unit[0]
-                    })
-            prompts.append({
-                        "role": "assistant",
-                        "content": unit[1]
-                    })
-        prompts.append({
-                        "role": "assistant",
-                        "content": "\n".join(stage.action["toAgent"])
-                    })
-        prompts.append({
-                        "role": "user",
-                        "content": userText
-                    })
-        # botReply += "\n***"+"\n***".join([str(unit) for unit in prompts])
-        botReply += "\n"+callGpt(prompts, 0.3)
-    if "continuer" in stage.action:
-        botReply +="\n"+stage.action["continuer"]
-    return botReply       
+
+        ## Get history from DB
+        convHistory = getByKey(client, redisLabel)
+        if convHistory is None:
+            return updateBotReplyContinuer(stage, "[500] USER'HISTORY IS MISSING.")
+        prompts[0]["content"]+= convHistory
+
+
+        ## Update user question
+        # prompts.append({
+        #                 "role": "user",
+        #                 "content": userText
+        #             })
+        # convHistory+="\nuser: "+userText
+
+        ##
+        #botReply += "\n***prompts: "+str(prompts)+"\n"
+        botReply += callGpt(prompts, 0.7)
+        # botReply += "\n"+callGpt(prompts, 0.7)
+        # convHistory+="\nassistant: "+botReply
+    else:
+        botReply = tips
+
+    ## Update history to DB
+    updateDocuments(client, [{"key":TIPSLABEL, "value": botReply}])
+    return updateBotReplyContinuer(stage, botReply)       
 
 
