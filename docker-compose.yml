@@ -11,7 +11,7 @@ services:
     environment:
       - ChatGPTApiKey=
       - ActionServerMode=
-    # entrypoint: /bin/bash -c "pip install -r requirement.txt && rasa run actions"
+    # entrypoint: /bin/bash -c "pip install pycrypto --user && rasa run actions"
     command: run actions
     depends_on:
       - training-model
@@ -24,7 +24,7 @@ services:
     working_dir: /app
     volumes:
       - ./actionsServer:/app
-    command: train
+    command: --help #train
   # test-model:
   #   image: rasa/rasa:3.6.6-full
   #   security_opt:
