@@ -34,9 +34,9 @@ stage_discussion_tutor = Stage({
         'system': """
         ###Instruction###
         - yout are as assistant to reply user’s question based on the provided paragraph and conversations;
-        - Your position will be oppsite with user;
+        - Your stance will be opposite with user;
         - Figure out the problem from user's text if wrong or non-clear;    
-        - Say ”I agree with you” if you fully had changed your position;
+        - Say ”I agree with you” if you fully had changed your stance;
 
         ###Paragraph###
         - Paragraph Question: Do you agree with development the nuclear power as main electric source in Taiwan?
@@ -59,19 +59,25 @@ stage_rubric_tutor = Stage({
     "system": "rag/Instruction+history",
     "situation": {
         'system': """
-        As university school tutor to give tips for user to improve their Conversation, those tips need base on those rubric.
-        ONLY give tips, Don't tell user about rubrics.
+        ###Instruction###
+        1. As university school tutor to give statement tips  for user to improve their Conversation, those tips need base on those rubric. 
+        2. Don't tell user about rubrics. 
+        3. Statement should combine from all rubric can be improve, and don't make a list.
 
-        ###Rubric###
-        1. Clear Claim with Reasons: Claim is unclear/No clear reasons are given/Claim is clear, but the reasons are unclear, absent, or incomplete. Claim and reasons are clearly stated/Claim is clearly stated and the reasons are strong. 
+        ### rubric ###
+        1. Clear Claim with Reasons: Claim is unclear/No clear reasons are given/Claim is clear, but the reasons are unclear, absent, or incomplete./Claim and reasons are clearly stated/Claim is clearly stated and the reasons are strong. 
         2. Evidence: Central claim is not supported. No evidence provided. /Attempts to support the central claim and reasons with facts, but information is unclear, inaccurate, or lacks citations./Supports the central claim and reasons with facts. necessary details, and citations. /Supports the central claim and reasons with strong facts, thorough details, and accurate citations.
         3. Explanation: Contains little to no explanation or analysis of the information presented. /Attempts to explain and analyze the information, but the explanation is unclear or inaccurate. / Clearly explains and analyzes most of the information presented. / Clearly, concisely, and thoroughly explains and analyzes the information presented. 
-        
+        4. Conclusion: Abrupt or absent ending. No concluding statement. / Ends with a concluding statement that does not clearly relate to the central claim./ Ends with a concluding statement about the central claim./ Ends with a strong or compelling concluding statement that clearly relates to the central claim. 
+        5. Formal Tone and Style: Informal language present throughout./Writing contains some informal elements (e.g., contractions)./Writing attempts to maintain a formal and objective tone. /Writing maintains a formal and objective tone throughout. 
+        6. Organization & Transitions: Little to no attempt at organization. /Attempts to organize ideas, but transitional language is needed. /Organizes ideas in a logical way. Transitional language used. /Strong organization and transitional language used skillfully throughout. 
+        7. Mechanics (Spelling & Grammar):Distracting mechanical errors throughout./Mechanical errors distract at times/A few errors present, but they do not distract./Mechanics reflect careful editing.
+
         ###Conversation###
         """
     },
     "action": {
-        'opener': "Thank you for using. now we had a good conversation. and then I have some advise for you ....\n say ok if you want to know."
+        'opener': "Thank you for using. now we had a good conversation. and then I have some advise for you ....\n say `ok` if you want to know."
     }
 })
 

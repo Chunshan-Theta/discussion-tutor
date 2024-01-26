@@ -124,7 +124,7 @@ def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
         if convHistory is None:
             return updateBotReplyContinuer(stage, "[500] USER'HISTORY IS MISSING.")
         prompts[0]["content"]+= convHistory
-
+        prompts[0]["content"]+= "\n###TIPS###\n"
 
         ## Update user question
         # prompts.append({
@@ -134,12 +134,13 @@ def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
         # convHistory+="\nuser: "+userText
 
         ##
-        #botReply += "\n***prompts: "+str(prompts)+"\n"
+        # botReply += "\n***prompts: "+str(prompts)+"\n"
         botReply += callGpt(prompts, 0.7)
         # botReply += "\n"+callGpt(prompts, 0.7)
         # convHistory+="\nassistant: "+botReply
     else:
-        botReply = tips
+        botReply = "you already finish your testing, following content is advices your got. "
+        botReply += tips
 
     ## Update history to DB
     updateDocuments(client, [{"key":TIPSLABEL, "value": botReply}])

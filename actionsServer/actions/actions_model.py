@@ -85,12 +85,13 @@ class ActionAskGpt(Action):
         
 
         ##
-        ## TODO: DONT DO AGAING ANALYSIS           
-        for line in callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker)).split("\n"):
+        ## TODO: DONT DO AGAING ANALYSIS
+        botReply = callGPTByStage(getUserId(tracker), userStatus['stage'], getUserText(tracker))         
+        for line in botReply.split("\n")  :
             dispatcher.utter_message(line)
 
         #dispatcher.utter_message("***roundCount: "+str(roundCount))
-        if roundCount > 3:
+        if roundCount > 3 or "I agree with you" in botReply:
             if userStatus['stage'] == "stage_discussion_tutor":
                 replies = goNext(userStatus,REDISLABELSTATUS)
                 for r in replies:
