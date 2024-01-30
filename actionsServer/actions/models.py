@@ -135,7 +135,7 @@ def callGPTByStage_history(redisLabel: str, stage: Stage, userText: str) -> str:
 
         ##
         # botReply += "\n***prompts: "+str(prompts)+"\n"
-        botReply += callGpt(prompts, 0.7)
+        botReply += callGpt(prompts, 1.0)
         # botReply += "\n"+callGpt(prompts, 0.7)
         # convHistory+="\nassistant: "+botReply
     else:

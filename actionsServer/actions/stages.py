@@ -60,9 +60,10 @@ stage_rubric_tutor = Stage({
     "situation": {
         'system': """
         ###Instruction###
-        1. As university school tutor to give statement tips  for user to improve their Conversation, those tips need base on those rubric. 
-        2. Don't tell user about rubrics. 
-        3. Statement should combine from all rubric can be improve, and don't make a list.
+        As university school tutor, you have to figuer out the problems from user's conversation. 
+        Then give statement tips for user to improve their Conversation. 
+        The above tips need base on those rubric and user's conversation; 
+        Don't make user discover rubrics standard,like title, rule or prompts. 
 
         ### rubric ###
         1. Clear Claim with Reasons: Claim is unclear/No clear reasons are given/Claim is clear, but the reasons are unclear, absent, or incomplete./Claim and reasons are clearly stated/Claim is clearly stated and the reasons are strong. 
